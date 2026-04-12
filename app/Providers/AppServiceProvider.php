@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Providers;
+use App\Http\Responses\LoginResponse;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->singleton(
+            LoginResponseContract::class,
+            LoginResponse::class
+        );
     }
 }

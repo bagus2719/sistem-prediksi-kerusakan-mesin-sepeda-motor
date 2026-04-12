@@ -1,23 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\User\Dashboard as UserDashboard;
+use App\Livewire\User\Prediksi;
+use App\Livewire\Admin\Dashboard as AdminDashboard;
 
-Route::view('/', 'welcome');
+//Public Route
+Route::get('/', UserDashboard::class);
+Route::get('/dashboard', UserDashboard::class)->name('dashboard');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+//User Route (LOGIN
+Route::middleware(['auth'])->group(function () {
+    Route::get('/prediksi', Prediksi::class)->name('prediksi');
+});
 
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+//Admin Route
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', AdminDashboard::class)->name('admin.dashboard');
+});
 
-Route::get('dataset', function () {
-    return view('dataset');
-})->middleware(['auth']);
-
-Route::get('/rules', function () {
-    return view('rules');
-})->middleware(['auth']);
-
+//Auth Route
 require __DIR__ . '/auth.php';
