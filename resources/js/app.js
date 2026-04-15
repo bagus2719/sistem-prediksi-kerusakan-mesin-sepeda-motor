@@ -1,5 +1,13 @@
 import './bootstrap';
-import 'flowbite';
 
-import Chart from 'chart.js/auto';
-window.Chart = Chart;
+import Alpine from 'alpinejs';
+import 'flowbite';
+import { initFlowbite } from 'flowbite';
+
+window.Alpine = Alpine;
+
+Alpine.start();
+
+document.addEventListener('livewire:navigated', () => {
+    initFlowbite();
+});

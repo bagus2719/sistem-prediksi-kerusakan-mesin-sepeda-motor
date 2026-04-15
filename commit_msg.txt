@@ -1,0 +1,18 @@
+feat: merombak sistem prediksi dengan multi-step wizard dan master data motor
+
+Feature (Fitur Baru):
+- Menambahkan algoritma pangkalan data baru (`motors` table) dan entitas *Seeder* untuk melacak berbagai unit Honda dan Yamaha.
+- Membangun antarmuka pengguna Prediksi berbasis *Multi-step Wizard* (Info Kendaraan -> Checklist Gejala -> Hasil Solusi) sehingga lebih interaktif dan profesional.
+- Meneruskan hitungan *skoring* Forward Chaining yang dikombinasi dengan bobot presentase probabilitas dari keluhan pengguna.
+- Menambahkan skema migrasi tabel histori (`riwayats`) agar dapat menampung identitas referensi motor dan tipe pembakarannya.
+
+Fix (Perbaikan):
+- Memperbaiki atribut reaktivitas Livewire (`wire:model.live`) pada tombol *checkbox* Gejala dan *dropdown* Motor yang sebelumnya gagal melepas status pemblokiran tombol (*disabled*).
+- Menyatukan sistem tombol radio pilihan merek menggunakan metode standar `name` pada HTML.
+- Menyelesaikan *error* "Field 'kode' doesn't have a default value" lewat implementasi Auto-Generate Kode (T000X) pada tahapan Model Boot saat Impor Dataset CSV.
+
+Refactor & Chore:
+- Meringkas rancangan *kode* yang tidak lagi dipakai, mencakup Model dan *views* lawas di direktori *Dataset* atau Relasi Histori (TrainingDetail).
+- Mewujudkan struktur *Clean Code* di bagian `Prediksi.php` dan `web.php`.
+
+BREAKING CHANGE: Mengubah esensi dasar bagaimana sistem menyimpan histori prediksi, kini wajib menautkan ID Motor yang mereferensi baris di tabel turunan.
