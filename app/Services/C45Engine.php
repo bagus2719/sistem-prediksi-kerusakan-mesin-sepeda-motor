@@ -9,19 +9,19 @@ use Illuminate\Support\Facades\Log;
 class C45Engine
 {
     /**
-     * Build the C4.5 Decision Tree Model based on available Training data.
-     * Returns the created C45Model object or null if failed.
+     * Membangun Model Pohon Keputusan C4.5 berdasarkan data Training yang tersedia.
+     * Mengembalikan objek C45Model yang dibuat atau null jika gagal.
      */
     public function generateModel()
     {
-        // 1. Fetch all training datasets with their Kerusakan result and Motor's sistem_pembakaran
+        // 1. Ambil semua dataset training beserta hasil Kerusakan dan sistem_pembakaran Motor-nya
         $trainings = Training::with('motor')->get();
 
         if ($trainings->isEmpty()) {
             throw new \Exception('Data training kosong. Silakan import dataset terlebih dahulu.');
         }
 
-        // 2. Format data into an array format suitable for the engine
+        // 2. Format data menjadi bentuk array yang sesuai untuk mesin C4.5
         $dataset = [];
         $attributes = [];
 
@@ -29,7 +29,7 @@ class C45Engine
             $row = [];
             
             // Atribut: Sistem Pembakaran (Injeksi / Karburator)
-            // if you want to include it. As per previous open questions, we can include it.
+            // jika Anda ingin menyertakannya. Sesuai diskusi sebelumnya, kita dapat menyertakannya.
             if ($training->motor) {
                 $row['sistem_pembakaran'] = $training->motor->sistem_pembakaran;
             } else {
@@ -40,11 +40,11 @@ class C45Engine
             $gejalas = is_string($training->data_gejala) ? json_decode($training->data_gejala, true) : $training->data_gejala;
             if (is_array($gejalas)) {
                 foreach ($gejalas as $kode => $nilai) {
-                    $row[$kode] = $nilai; // e.g. "G01" => 1
+                    $row[$kode] = $nilai; // misal. "G01" => 1
                 }
             }
 
-            // Target/Class: Kerusakan (karena C4.5 akan mengklasifikasikan ini)
+            // Target/Kelas: Kerusakan (karena C4.5 akan mengklasifikasikan ini)
             $row['class'] = $training->kerusakan_id;
 
             $dataset[] = $row;
@@ -54,21 +54,21 @@ class C45Engine
             throw new \Exception('Data training tidak memiliki format matriks fitur yang valid.');
         }
 
-        // 3. Collect unique attributes to evaluate (all keys except 'class')
+        // 3. Kumpulkan atribut unik untuk dievaluasi (semua kunci kecuali 'class')
         $attributes = array_keys($dataset[0]);
         $attributes = array_values(array_filter($attributes, fn($key) => $key !== 'class'));
 
-        // 4. Start recursive tree building
+        // 4. Mulai membangun pohon secara rekursif
         $treeData = $this->buildTree($dataset, $attributes);
 
-        // 5. Store the model in Database
+        // 5. Simpan model ke dalam Database
         // Nonaktifkan semua model lama
         C45Model::where('is_active', true)->update(['is_active' => false]);
 
         // Simpan model baru
         $model = C45Model::create([
             'tree_data' => $treeData,
-            'accuracy' => 100, // Optional: calculating accuracy using test split can be done later
+            'accuracy' => 100, // Opsional: menghitung akurasi menggunakan split uji (test split) dapat dilakukan nanti
             'is_active' => true
         ]);
 
@@ -76,20 +76,20 @@ class C45Engine
     }
 
     /**
-     * Recursive function to build the Decision Tree.
+     * Fungsi rekursif untuk membangun Pohon Keputusan.
      * 
-     * @param array $dataset Current subset of data
-     * @param array $attributes Available attributes to split on
-     * @return array Node structure
+     * @param array $dataset Subset data saat ini
+     * @param array $attributes Atribut yang tersedia untuk pemisahan
+     * @return array Struktur Node
      */
     private function buildTree($dataset, $attributes)
     {
-        // Check if dataset is empty
+        // Periksa apakah dataset kosong
         if (empty($dataset)) {
-            return ['type' => 'leaf', 'class' => null]; // Cannot determine
+            return ['type' => 'leaf', 'class' => null]; // Tidak dapat menentukan
         }
 
-        // Base case 1: If all instances in dataset have the SAME class, return leaf node
+        // Kasus dasar 1: Jika semua instansi dalam dataset memiliki kelas yang SAMA, kembalikan node daun (leaf node)
         $classes = array_column($dataset, 'class');
         $uniqueClasses = array_unique($classes);
         if (count($uniqueClasses) === 1) {
@@ -97,16 +97,16 @@ class C45Engine
             return ['type' => 'leaf', 'class' => $c, 'probabilities' => [$c => 100.0]];
         }
 
-        // Base case 2: If no attributes left to split, return leaf node with MAJORITY class
+        // Kasus dasar 2: Jika tidak ada atribut tersisa untuk dipisah, kembalikan node daun dengan kelas MAYORITAS
         if (empty($attributes)) {
             $majorityClass = $this->getMajorityClass($classes);
             return ['type' => 'leaf', 'class' => $majorityClass, 'probabilities' => $this->calculateDistribution($classes)];
         }
 
-        // Calculate Entropy of current dataset (S)
+        // Hitung Entropy dari dataset saat ini (S)
         $entropyS = $this->calculateEntropy($dataset);
 
-        // Calculate Gain Ratio for each attribute
+        // Hitung Gain Ratio untuk setiap atribut
         $bestGainRatio = -1;
         $bestAttribute = null;
 
@@ -118,36 +118,36 @@ class C45Engine
             }
         }
 
-        // Base case 3: If best gain ratio is 0 or negative, we can't split usefully anymore, return majority class
+        // Kasus dasar 3: Jika gain ratio terbaik adalah 0 atau negatif, kita tidak bisa melakukan pemisahan yang berguna lagi, kembalikan kelas mayoritas
         if ($bestGainRatio <= 0) {
             $majorityClass = $this->getMajorityClass($classes);
             return ['type' => 'leaf', 'class' => $majorityClass, 'probabilities' => $this->calculateDistribution($classes)];
         }
 
-        // Create the internal node
+        // Buat node internal
         $node = [
             'type' => 'node',
             'attribute' => $bestAttribute,
             'children' => []
         ];
 
-        // Get unique values of the best attribute in the current dataset
+        // Dapatkan nilai unik dari atribut terbaik dalam dataset saat ini
         $attributeValues = array_unique(array_column($dataset, $bestAttribute));
 
-        // Remove the chosen attribute from the list for the next recursive steps
+        // Hapus atribut yang dipilih dari daftar untuk langkah rekursif selanjutnya
         $remainingAttributes = array_values(array_filter($attributes, fn($attr) => $attr !== $bestAttribute));
 
-        // Recursively build branches for each unique value
+        // Bangun cabang secara rekursif untuk setiap nilai unik
         foreach ($attributeValues as $value) {
-            // Subset S_v (data where attribute = value)
+            // Subset S_v (data di mana atribut = nilai)
             $subset = array_filter($dataset, fn($row) => isset($row[$bestAttribute]) && $row[$bestAttribute] === $value);
             
             if (empty($subset)) {
-                // If subset is empty, attach a leaf with majority class of the PARENT dataset
+                // Jika subset kosong, pasangkan daun dengan kelas mayoritas dari dataset INDUK
                 $majorityClass = $this->getMajorityClass($classes);
                 $node['children'][$value] = ['type' => 'leaf', 'class' => $majorityClass, 'probabilities' => $this->calculateDistribution($classes)];
             } else {
-                // Recursion
+                // Rekursi
                 $node['children'][$value] = $this->buildTree(array_values($subset), $remainingAttributes);
             }
         }
@@ -156,7 +156,7 @@ class C45Engine
     }
 
     /**
-     * Calculate Shannon Entropy of a dataset.
+     * Hitung Shannon Entropy dari sebuah dataset.
      */
     private function calculateEntropy($dataset)
     {
@@ -182,7 +182,7 @@ class C45Engine
     }
 
     /**
-     * Calculate Gain Ratio for a specific attribute.
+     * Hitung Gain Ratio untuk atribut tertentu.
      * Gain Ratio = Information Gain / Split Info
      */
     private function calculateGainRatio($dataset, $attribute, $entropyS)
@@ -193,7 +193,7 @@ class C45Engine
         $totalItems = count($dataset);
         if ($totalItems === 0) return 0;
 
-        // Group dataset by the attribute's values
+        // Kelompokkan dataset berdasarkan nilai-nilai atribut
         $subsets = [];
         foreach ($dataset as $row) {
             $val = isset($row[$attribute]) ? $row[$attribute] : null;
@@ -203,7 +203,7 @@ class C45Engine
             $subsets[$val][] = $row;
         }
 
-        // Sum up the weighted entropy (for Info Gain) and Split Info
+        // Jumlahkan bobot entropy (untuk Info Gain) dan Split Info
         $subsetEntropySum = 0;
         $splitInfo = 0;
 
@@ -211,18 +211,18 @@ class C45Engine
             $subsetSize = count($subset);
             $weight = $subsetSize / $totalItems;
             
-            // For Information Gain
+            // Untuk Information Gain
             $subsetEntropy = $this->calculateEntropy($subset);
             $subsetEntropySum += $weight * $subsetEntropy;
 
-            // For Split Info
+            // Untuk Split Info
             $splitInfo -= $weight * log($weight, 2);
         }
 
-        // Information Gain = Entropy(S) - Sum(Weight * Entropy(S_v))
+        // Information Gain = Entropy(S) - Sum(Bobot * Entropy(S_v))
         $infoGain = $entropyS - $subsetEntropySum;
 
-        // If SplitInfo is 0 (all instances have the same attribute value), Gain Ratio is undefined/0
+        // Jika SplitInfo 0 (semua instansi memiliki nilai atribut yang sama), Gain Ratio tidak terdefinisi/0
         if ($splitInfo == 0) {
             return 0;
         }
@@ -232,7 +232,7 @@ class C45Engine
     }
 
     /**
-     * Helper to get the most frequent class in a given array of classes.
+     * Fungsi bantuan (helper) untuk mendapatkan kelas yang paling sering muncul dalam array kelas yang diberikan.
      */
     private function getMajorityClass($classes)
     {
@@ -244,7 +244,7 @@ class C45Engine
     }
 
     /**
-     * Calculate distribution (confidence percentages) of classes.
+     * Hitung distribusi (persentase kepercayaan) dari kelas-kelas.
      */
     private function calculateDistribution($classes)
     {
