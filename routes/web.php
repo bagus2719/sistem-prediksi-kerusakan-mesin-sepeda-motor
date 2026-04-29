@@ -8,6 +8,7 @@ use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\Gejala\Index as GejalaIndex;
 use App\Livewire\Admin\Kerusakan\Index as KerusakanIndex;
 use App\Livewire\Admin\Training\Index as TrainingIndex;
+use App\Livewire\Admin\Algoritma\Index as AlgoritmaIndex;
 use App\Livewire\Admin\Riwayat\Index as RiwayatAdmin;
 
 Route::get('/', Dashboard::class)->name('home');
@@ -35,6 +36,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/training', TrainingIndex::class)->name('admin.training');
     Route::get('/admin/training/create', \App\Livewire\Admin\Training\Create::class)->name('admin.training.create');
     Route::get('/admin/training/{id}/edit', \App\Livewire\Admin\Training\Edit::class)->name('admin.training.edit');
+
+    // Algoritma C4.5
+    Route::get('/admin/algoritma', AlgoritmaIndex::class)->name('admin.algoritma');
+
+    // Motor CRUD
+    Route::get('/admin/motor', \App\Livewire\Admin\Motor\Index::class)->name('admin.motor.index');
+    Route::get('/admin/motor/create', \App\Livewire\Admin\Motor\Create::class)->name('admin.motor.create');
+    Route::get('/admin/motor/{id}/edit', \App\Livewire\Admin\Motor\Edit::class)->name('admin.motor.edit');
 
     // Riwayat
     Route::get('/admin/riwayat', RiwayatAdmin::class)->name('admin.riwayat');

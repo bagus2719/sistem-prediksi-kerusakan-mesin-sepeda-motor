@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Motor extends Model
 {
-    protected $fillable = ['merk', 'nama_motor'];
+    protected $fillable = ['merk', 'nama_motor', 'sistem_pembakaran'];
 }

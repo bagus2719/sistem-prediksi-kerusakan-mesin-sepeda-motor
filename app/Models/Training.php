@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Training extends Model
 {
-    protected $fillable = ['kode', 'kerusakan_id', 'data_gejala'];
+    protected $fillable = ['kode', 'kerusakan_id', 'motor_id', 'data_gejala'];
 
     protected static function boot()
     {
@@ -23,5 +23,10 @@ class Training extends Model
     public function kerusakan()
     {
         return $this->belongsTo(Kerusakan::class);
+    }
+
+    public function motor()
+    {
+        return $this->belongsTo(Motor::class);
     }
 }

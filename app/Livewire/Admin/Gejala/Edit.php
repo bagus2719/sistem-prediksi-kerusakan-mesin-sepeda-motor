@@ -9,6 +9,7 @@ class Edit extends Component
 {
     public $gejalaId;
     public $kode, $nama_gejala, $keterangan;
+    public $sistem_pembakaran;
 
     public function mount($id)
     {
@@ -16,6 +17,7 @@ class Edit extends Component
         $this->gejalaId = $gejala->id;
         $this->kode = $gejala->kode;
         $this->nama_gejala = $gejala->nama_gejala;
+        $this->sistem_pembakaran = $gejala->sistem_pembakaran;
         $this->keterangan = $gejala->keterangan;
     }
 
@@ -24,6 +26,7 @@ class Edit extends Component
         $this->validate([
             'kode' => 'required|unique:gejalas,kode,' . $this->gejalaId,
             'nama_gejala' => 'required|string|max:255',
+            'sistem_pembakaran' => 'required|in:Keduanya,Injeksi,Karburator',
         ], [
             'kode.required' => 'Kode gejala wajib diisi',
             'kode.unique' => 'Kode gejala sudah terpakai',
@@ -34,6 +37,7 @@ class Edit extends Component
         $gejala->update([
             'kode' => $this->kode,
             'nama_gejala' => $this->nama_gejala,
+            'sistem_pembakaran' => $this->sistem_pembakaran,
             'keterangan' => $this->keterangan,
         ]);
 

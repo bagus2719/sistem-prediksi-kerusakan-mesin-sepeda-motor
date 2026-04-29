@@ -13,14 +13,32 @@ class MotorSeeder extends Seeder
      */
     public function run(): void
     {
-        $honda_models = ['Vario 125', 'Vario 150', 'Vario 160', 'Beat Karbu', 'Beat FI', 'Scoopy', 'PCX', 'ADV'];
-        foreach ($honda_models as $nama) {
-            Motor::create(['merk' => 'HONDA', 'nama_motor' => $nama]);
+        $honda_models = [
+            'Vario 125' => 'Injeksi', 
+            'Vario 150' => 'Injeksi', 
+            'Vario 160' => 'Injeksi', 
+            'Beat Karbu' => 'Karburator', 
+            'Beat FI' => 'Injeksi', 
+            'Scoopy' => 'Injeksi', 
+            'PCX' => 'Injeksi', 
+            'ADV' => 'Injeksi'
+        ];
+        
+        foreach ($honda_models as $nama => $sistem) {
+            Motor::create(['merk' => 'HONDA', 'nama_motor' => $nama, 'sistem_pembakaran' => $sistem]);
         }
 
-        $yamaha_models = ['Mio Karbu', 'Mio M3', 'NMAX', 'Aerox', 'Lexi', 'Fino'];
-        foreach ($yamaha_models as $nama) {
-            Motor::create(['merk' => 'YAMAHA', 'nama_motor' => $nama]);
+        $yamaha_models = [
+            'Mio Karbu' => 'Karburator', 
+            'Mio M3' => 'Injeksi', 
+            'NMAX' => 'Injeksi', 
+            'Aerox' => 'Injeksi', 
+            'Lexi' => 'Injeksi', 
+            'Fino' => 'Injeksi'
+        ];
+        
+        foreach ($yamaha_models as $nama => $sistem) {
+            Motor::create(['merk' => 'YAMAHA', 'nama_motor' => $nama, 'sistem_pembakaran' => $sistem]);
         }
     }
 }

@@ -2,15 +2,15 @@
     <div class="flex justify-between items-center mb-6">
         <div>
             <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Riwayat Prediksi</h2>
-            <p class="text-slate-500 text-sm mt-1">Daftar rekaman diagnostik kerusakan yang pernah diajukan oleh pengguna sistem.</p>
+            <p class="text-slate-500 text-base mt-1">Daftar rekaman diagnostik kerusakan yang pernah diajukan oleh pengguna sistem.</p>
         </div>
     </div>
 
     <!-- TABLE CARD -->
-    <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
+            <table class="w-full text-base text-left">
+                <thead class="text-sm text-slate-500 uppercase bg-slate-50/50 border-b border-slate-200">
                     <tr>
                         <th class="px-6 py-4 font-bold tracking-wider">Tgl / Waktu</th>
                         <th class="px-6 py-4 font-bold tracking-wider">Nama Pengguna</th>
@@ -28,12 +28,12 @@
                             {{ $r->user->name ?? 'Pengguna Anonim' }}
                         </td>
                         <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 font-bold text-xs ring-1 ring-inset ring-indigo-700/10">
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-sm ring-1 ring-inset ring-indigo-700/10">
                                 {{ $r->kerusakan->nama_kerusakan ?? 'Tidak Diketahui' }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <button wire:click="delete({{ $r->id }})" wire:confirm="Yakin ingin menghapus riwayat diagnostik ini?" class="inline-flex items-center px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors shadow-sm">
+                            <button wire:click="delete({{ $r->id }})" wire:confirm="Yakin ingin menghapus riwayat diagnostik ini?" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors shadow-sm">
                                 Hapus Log
                             </button>
                         </td>
