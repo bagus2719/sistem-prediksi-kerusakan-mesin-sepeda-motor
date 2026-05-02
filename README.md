@@ -112,7 +112,3 @@ Untuk membuat sistem pakar ini bisa "menebak" kerusakan, Admin harus memberinya 
 6. Selesai! Pohon Keputusan telah terbentuk dan *User* sudah bisa menggunakan halaman **Mulai Prediksi**.
 
 ---
-
-<p align="center">
-  Dibuat dengan ❤️ untuk kemudahan deteksi kerusakan motor. 
-</p>
