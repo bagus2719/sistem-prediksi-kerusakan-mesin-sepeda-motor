@@ -41,7 +41,7 @@
             </div>
             <div>
                 <p class="text-slate-500 font-medium text-sm">Total Gejala Dikenali</p>
-                <h3 class="text-3xl font-extrabold text-slate-800">14</h3>
+                <h3 class="text-3xl font-extrabold text-slate-800">{{ $total_gejala }}</h3>
             </div>
         </div>
 
@@ -51,7 +51,7 @@
             </div>
             <div>
                 <p class="text-slate-500 font-medium text-sm">Identifikasi Kerusakan</p>
-                <h3 class="text-3xl font-extrabold text-slate-800">17</h3>
+                <h3 class="text-3xl font-extrabold text-slate-800">{{ $total_kerusakan }}</h3>
             </div>
         </div>
 

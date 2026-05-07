@@ -99,57 +99,59 @@ class Prediksi extends Component
         $tree = $activeModel->tree_data;
         $leafNode = $this->traverseTree($tree, $testData);
 
-        if (!$leafNode) {
-            session()->flash('error', 'Sistem tidak dapat mengklasifikasikan kerusakan berdasarkan pola data latih yang ada.');
-            return;
-        }
+        $predictedKerusakanId = $leafNode ? ($leafNode['class'] ?? null) : null;
+        $probabilities = $leafNode ? ($leafNode['probabilities'] ?? []) : [];
 
-        $predictedKerusakanId = $leafNode['class'] ?? null;
-        $probabilities = $leafNode['probabilities'] ?? [];
+        $top3 = [];
+        $existingIds = [];
 
-        $topKerusakanDb = Kerusakan::find($predictedKerusakanId);
-
-        if ($topKerusakanDb) {
-            // Build top 3 list
-            $top3 = [];
-            $existingIds = [];
-            
-            // 1. Ambil dari probabilitas daun C4.5
-            foreach ($probabilities as $k_id => $conf) {
-                if (count($top3) >= 3) break;
-                $k = Kerusakan::find($k_id);
-                if ($k) {
-                    $top3[] = [
-                        'kerusakan' => $k,
-                        'confidence' => $conf
-                    ];
-                    $existingIds[] = $k_id;
-                }
-            }
-
-            // 2. Jika hasil kurang dari 3 (karena data training menghasilkan daun murni 100%), 
-            // cari alternatif menggunakan Similaritas Jaccard
-            if (count($top3) < 3) {
-                $alternatives = $this->getAlternativePredictions($existingIds, $this->gejalaDipilih, 3 - count($top3));
-                foreach ($alternatives as $k_id => $conf) {
+        if ($predictedKerusakanId) {
+            $topKerusakanDb = Kerusakan::find($predictedKerusakanId);
+            if ($topKerusakanDb) {
+                // 1. Ambil dari probabilitas daun C4.5 (MURNI C4.5)
+                foreach ($probabilities as $k_id => $conf) {
+                    if (count($top3) >= 3) break;
                     $k = Kerusakan::find($k_id);
                     if ($k) {
-                        // Pastikan persentase alternatif tidak melebihi hasil utama C4.5
-                        $maxConf = empty($top3) ? 99 : end($top3)['confidence'] - 0.1;
-                        if ($conf > $maxConf) {
-                            $conf = $maxConf;
-                        }
-
                         $top3[] = [
                             'kerusakan' => $k,
                             'confidence' => round($conf, 1)
                         ];
+                        $existingIds[] = $k_id;
                     }
                 }
-            }
 
+                // Urutkan probabilitas bawaan C4.5
+                usort($top3, function($a, $b) {
+                    return $b['confidence'] <=> $a['confidence'];
+                });
+            }
+        }
+
+        // Jika C4.5 gagal penuh atau kurang dari 3, ambil dari Jaccard
+        if (count($top3) < 3) {
+            // Filter alternatif sesuai sistem pembakaran
+            $alternatives = $this->getAlternativePredictions($existingIds, $this->gejalaDipilih, 3 - count($top3), $motor ? $motor->sistem_pembakaran : null);
+            foreach ($alternatives as $k_id => $conf) {
+                $k = Kerusakan::find($k_id);
+                if ($k) {
+                    // Pastikan persentase alternatif murni sekadar pelengkap
+                    $maxConf = empty($top3) ? 99 : end($top3)['confidence'] - 0.1;
+                    if ($conf > $maxConf) {
+                        $conf = $maxConf;
+                    }
+
+                    $top3[] = [
+                        'kerusakan' => $k,
+                        'confidence' => round($conf, 1)
+                    ];
+                }
+            }
+        }
+
+        if (count($top3) > 0) {
             $this->hasil = [
-                'kerusakan' => $topKerusakanDb, // Top 1 default
+                'kerusakan' => $top3[0]['kerusakan'], // Top 1 default
                 'gejala_dipilih' => $this->gejalaDipilih,
                 'top_3' => $top3
             ];
@@ -160,17 +162,17 @@ class Prediksi extends Component
                 
                 Riwayat::create([
                     'user_id' => Auth::id(),
-                    'kerusakan_id' => $topKerusakanDb->id,
+                    'kerusakan_id' => $top3[0]['kerusakan']->id,
                     'gejala_dipilih' => $this->gejalaDipilih,
                     'motor_id' => $this->selectedMotorId,
                     'sistem_pembakaran' => $motorTerpilih ? $motorTerpilih->sistem_pembakaran : null,
-                    'confidence' => $probabilities[$predictedKerusakanId] ?? 100.0
+                    'confidence' => $top3[0]['confidence']
                 ]);
             }
 
             $this->step = 3;
         } else {
-            session()->flash('error', 'ID Kerusakan tidak ditemukan dalam database Master.');
+            session()->flash('error', 'Sistem tidak dapat mengklasifikasikan kerusakan berdasarkan gejala tersebut.');
         }
     }
 
@@ -180,6 +182,9 @@ class Prediksi extends Component
     private function traverseTree($node, $testData)
     {
         if (!isset($node['type'])) return null;
+
+        // Node 'unknown' = cabang kosong tanpa data latih, C4.5 tidak bisa menebak
+        if ($node['type'] === 'unknown') return null;
 
         if ($node['type'] === 'leaf') {
             return $node; // Return the entire leaf node containing class and probabilities
@@ -198,25 +203,30 @@ class Prediksi extends Component
             }
 
             // Jika dataset testing memiliki nilai yang TIDAK PERNAH dilihat saat training (Outlier)
-            // Coba fallback ke kelas mayoritas atau default leaf (jika ada).
-            // Simplifikasi: Ambil child pertama secara sewenang-wenang sebagai fallback (atau implementasi probabilitas).
-            $firstChild = reset($children);
-            if ($firstChild) {
-                 return $this->traverseTree($firstChild, $testData);
-            }
+            // Hentikan C4.5 agar sistem beralih ke Fallback (Jaccard Similarity).
+            return null;
         }
 
         return null;
     }
 
 
+
     /**
      * Hitung prediksi alternatif berdasarkan kemiripan (Jaccard Similarity) 
      * antara gejala user dengan data training historis.
      */
-    private function getAlternativePredictions($existingKerusakanIds, $gejalaDipilih, $limit)
+    private function getAlternativePredictions($existingKerusakanIds, $gejalaDipilih, $limit, $sistemPembakaran = null)
     {
-        $trainings = \App\Models\Training::all();
+        $trainings = \App\Models\Training::with('motor')->get();
+
+        if ($sistemPembakaran) {
+            $trainings = $trainings->filter(function($t) use ($sistemPembakaran) {
+                if ($sistemPembakaran == 'Umum') return true;
+                return $t->motor && $t->motor->sistem_pembakaran == $sistemPembakaran;
+            });
+        }
+
         $scores = [];
 
         foreach ($trainings as $t) {

@@ -40,6 +40,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Algoritma C4.5
     Route::get('/admin/algoritma', AlgoritmaIndex::class)->name('admin.algoritma');
 
+    // Pengujian
+    Route::get('/admin/pengujian', \App\Livewire\Admin\Pengujian\Index::class)->name('admin.pengujian');
+
     // Motor CRUD
     Route::get('/admin/motor', \App\Livewire\Admin\Motor\Index::class)->name('admin.motor.index');
     Route::get('/admin/motor/create', \App\Livewire\Admin\Motor\Create::class)->name('admin.motor.create');

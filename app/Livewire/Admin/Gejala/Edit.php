@@ -8,7 +8,7 @@ use App\Models\Gejala;
 class Edit extends Component
 {
     public $gejalaId;
-    public $kode, $nama_gejala, $keterangan;
+    public $kode, $nama_gejala;
     public $sistem_pembakaran;
 
     public function mount($id)
@@ -18,7 +18,6 @@ class Edit extends Component
         $this->kode = $gejala->kode;
         $this->nama_gejala = $gejala->nama_gejala;
         $this->sistem_pembakaran = $gejala->sistem_pembakaran;
-        $this->keterangan = $gejala->keterangan;
     }
 
     public function update()
@@ -38,7 +37,6 @@ class Edit extends Component
             'kode' => $this->kode,
             'nama_gejala' => $this->nama_gejala,
             'sistem_pembakaran' => $this->sistem_pembakaran,
-            'keterangan' => $this->keterangan,
         ]);
 
         session()->flash('message', 'Gejala berhasil diperbarui!');

@@ -13,6 +13,5 @@ class Gejala extends Model
         'kode',
         'nama_gejala',
         'sistem_pembakaran',
-        'keterangan',
     ];
 }

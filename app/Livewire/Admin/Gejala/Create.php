@@ -7,7 +7,7 @@ use App\Models\Gejala;
 
 class Create extends Component
 {
-    public $kode, $nama_gejala, $keterangan;
+    public $kode, $nama_gejala;
     public $sistem_pembakaran = 'Keduanya';
 
     public function store()
@@ -26,7 +26,6 @@ class Create extends Component
             'kode' => $this->kode,
             'nama_gejala' => $this->nama_gejala,
             'sistem_pembakaran' => $this->sistem_pembakaran,
-            'keterangan' => $this->keterangan,
         ]);
 
         session()->flash('message', 'Gejala baru berhasil ditambahkan!');

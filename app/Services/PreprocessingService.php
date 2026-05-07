@@ -106,6 +106,12 @@ class PreprocessingService
         if ($brandIndex === false) {
             $brandIndex = array_search('BRAND', $header);
         }
+        if ($brandIndex === false) {
+            $brandIndex = array_search('Merk', $header);
+        }
+        if ($brandIndex === false) {
+            $brandIndex = array_search('MERK', $header);
+        }
 
         $modelIndex = array_search('Model', $header);
         if ($modelIndex === false) {
@@ -115,6 +121,12 @@ class PreprocessingService
         $tipeIndex = array_search('Tipe', $header);
         if ($tipeIndex === false) {
             $tipeIndex = array_search('TIPE', $header);
+        }
+        if ($tipeIndex === false) {
+            $tipeIndex = array_search('Tipe_Sistem', $header);
+        }
+        if ($tipeIndex === false) {
+            $tipeIndex = array_search('TIPE_SISTEM', $header);
         }
 
         $allGejalas = Gejala::all()->pluck('kode')->toArray();

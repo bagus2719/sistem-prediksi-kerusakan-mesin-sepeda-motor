@@ -74,7 +74,27 @@
                 </div>
                 @endif
 
-
+                {{-- Info Card Motor Terpilih --}}
+                @if($selectedMotorId)
+                @php $motorTerpilih = collect($availableMotors)->firstWhere('id', (int)$selectedMotorId); @endphp
+                @if($motorTerpilih)
+                <div class="animate-[fade-in-up_0.3s_ease-out] bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-0.5">Motor Anda</p>
+                        <p class="text-lg font-extrabold text-indigo-900">{{ $motorTerpilih->nama_motor }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-0.5">Sistem</p>
+                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-bold {{ $motorTerpilih->sistem_pembakaran == 'Injeksi' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
+                            {{ $motorTerpilih->sistem_pembakaran }}
+                        </span>
+                    </div>
+                </div>
+                @endif
+                @endif
 
                 <div class="pt-8 flex justify-end">
                     <button wire:click="nextStep" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl text-base font-bold transition-colors">
@@ -89,6 +109,25 @@
         <!-- STEP 2: GEJALA SELECTION -->
         @if($step == 2)
         <div>
+            {{-- Info Banner Kendaraan --}}
+            @php $motorInfo = App\Models\Motor::find($selectedMotorId); @endphp
+            @if($motorInfo)
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl p-5 mb-8 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Kendaraan Anda</p>
+                        <p class="text-base font-extrabold text-indigo-900">{{ $selectedMerk }} {{ $motorInfo->nama_motor }}</p>
+                    </div>
+                </div>
+                <span class="inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ $motorInfo->sistem_pembakaran == 'Injeksi' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-amber-100 text-amber-700 border border-amber-200' }}">
+                    {{ $motorInfo->sistem_pembakaran }}
+                </span>
+            </div>
+            @endif
+
             <!-- Header Controls -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 pb-6 border-b border-slate-100 gap-5 md:gap-0">
                 <div>

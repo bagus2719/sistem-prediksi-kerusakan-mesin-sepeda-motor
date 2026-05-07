@@ -39,13 +39,6 @@
                 <p class="text-sm text-slate-500 mt-2">Gejala ini hanya akan muncul di halaman prediksi jika user memilih jenis kendaraan yang sesuai.</p>
             </div>
 
-            <!-- Keterangan -->
-            <div>
-                <label for="keterangan" class="block text-base font-semibold text-slate-700 mb-2">Keterangan (Opsional)</label>
-                <textarea id="keterangan" wire:model="keterangan" rows="3" 
-                    class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-base rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-3 transition-colors"></textarea>
-            </div>
-
             <div class="pt-4 flex justify-end">
                 <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-base font-bold shadow-sm transition-colors">
                     Simpan Perubahan

@@ -13,32 +13,46 @@ class MotorSeeder extends Seeder
      */
     public function run(): void
     {
-        $honda_models = [
-            'Vario 125' => 'Injeksi', 
-            'Vario 150' => 'Injeksi', 
-            'Vario 160' => 'Injeksi', 
-            'Beat Karbu' => 'Karburator', 
-            'Beat FI' => 'Injeksi', 
-            'Scoopy' => 'Injeksi', 
-            'PCX' => 'Injeksi', 
-            'ADV' => 'Injeksi'
+        // ── HONDA INJEKSI ──
+        $honda_injeksi = [
+            'Beat FI', 'Beat Street', 'Vario 125', 'Vario 150',
+            'Scoopy FI', 'Genio', 'PCX 160', 'ADV 160',
         ];
-        
-        foreach ($honda_models as $nama => $sistem) {
-            Motor::create(['merk' => 'HONDA', 'nama_motor' => $nama, 'sistem_pembakaran' => $sistem]);
+        foreach ($honda_injeksi as $nama) {
+            Motor::updateOrCreate(
+                ['nama_motor' => $nama],
+                ['merk' => 'HONDA', 'sistem_pembakaran' => 'Injeksi']
+            );
         }
 
-        $yamaha_models = [
-            'Mio Karbu' => 'Karburator', 
-            'Mio M3' => 'Injeksi', 
-            'NMAX' => 'Injeksi', 
-            'Aerox' => 'Injeksi', 
-            'Lexi' => 'Injeksi', 
-            'Fino' => 'Injeksi'
+        // ── HONDA KARBURATOR ──
+        $honda_karbu = ['Beat Karbu', 'Vario 110 Karbu', 'Scoopy Karbu'];
+        foreach ($honda_karbu as $nama) {
+            Motor::updateOrCreate(
+                ['nama_motor' => $nama],
+                ['merk' => 'HONDA', 'sistem_pembakaran' => 'Karburator']
+            );
+        }
+
+        // ── YAMAHA INJEKSI ──
+        $yamaha_injeksi = [
+            'Mio M3', 'Mio S', 'Soul GT FI', 'NMAX 155',
+            'Aerox 155', 'Lexi', 'Freego', 'Fino FI',
         ];
-        
-        foreach ($yamaha_models as $nama => $sistem) {
-            Motor::create(['merk' => 'YAMAHA', 'nama_motor' => $nama, 'sistem_pembakaran' => $sistem]);
+        foreach ($yamaha_injeksi as $nama) {
+            Motor::updateOrCreate(
+                ['nama_motor' => $nama],
+                ['merk' => 'YAMAHA', 'sistem_pembakaran' => 'Injeksi']
+            );
+        }
+
+        // ── YAMAHA KARBURATOR ──
+        $yamaha_karbu = ['Mio Sporty', 'Mio Soul Karbu', 'Fino Karbu', 'Xeon Karbu'];
+        foreach ($yamaha_karbu as $nama) {
+            Motor::updateOrCreate(
+                ['nama_motor' => $nama],
+                ['merk' => 'YAMAHA', 'sistem_pembakaran' => 'Karburator']
+            );
         }
     }
 }

@@ -8,7 +8,10 @@ class Dashboard extends Component
 {
     public function render()
     {
-        return view('livewire.user.dashboard')
+        $total_gejala = \App\Models\Gejala::count();
+        $total_kerusakan = \App\Models\Kerusakan::count();
+
+        return view('livewire.user.dashboard', compact('total_gejala', 'total_kerusakan'))
         ->layout('livewire.user.layouts.app');
     }
 }

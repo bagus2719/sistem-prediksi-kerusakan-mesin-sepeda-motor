@@ -54,12 +54,30 @@ class C45Engine
             throw new \Exception('Data training tidak memiliki format matriks fitur yang valid.');
         }
 
-        // 3. Kumpulkan atribut unik untuk dievaluasi (semua kunci kecuali 'class')
+        // 3. Kumpulkan atribut unik untuk dievaluasi (semua kunci kecuali 'class' dan 'sistem_pembakaran')
         $attributes = array_keys($dataset[0]);
-        $attributes = array_values(array_filter($attributes, fn($key) => $key !== 'class'));
+        $attributes = array_values(array_filter($attributes, fn($key) => $key !== 'class' && $key !== 'sistem_pembakaran'));
 
-        // 4. Mulai membangun pohon secara rekursif
-        $treeData = $this->buildTree($dataset, $attributes);
+        // 4. Mulai membangun pohon dengan Forced Root Node berdasarkan Tipe Sistem (Injeksi / Karburator)
+        $treeData = [
+            'type' => 'node',
+            'attribute' => 'sistem_pembakaran',
+            'children' => []
+        ];
+
+        $pembakaranValues = array_unique(array_column($dataset, 'sistem_pembakaran'));
+
+        foreach ($pembakaranValues as $val) {
+            $subset = array_filter($dataset, fn($row) => isset($row['sistem_pembakaran']) && $row['sistem_pembakaran'] === $val);
+            
+            if (empty($subset)) {
+                $classes = array_column($dataset, 'class');
+                $majorityClass = $this->getMajorityClass($classes);
+                $treeData['children'][$val] = ['type' => 'leaf', 'class' => $majorityClass, 'probabilities' => $this->calculateDistribution($classes)];
+            } else {
+                $treeData['children'][$val] = $this->buildTree(array_values($subset), $attributes);
+            }
+        }
 
         // 5. Simpan model ke dalam Database
         // Nonaktifkan semua model lama
@@ -80,17 +98,26 @@ class C45Engine
      * 
      * @param array $dataset Subset data saat ini
      * @param array $attributes Atribut yang tersedia untuk pemisahan
+     * @param int $min_instances Batas minimum data untuk mencegah overfitting (Pre-pruning)
      * @return array Struktur Node
      */
-    private function buildTree($dataset, $attributes)
+    private function buildTree($dataset, $attributes, $min_instances = 2)
     {
         // Periksa apakah dataset kosong
         if (empty($dataset)) {
             return ['type' => 'leaf', 'class' => null]; // Tidak dapat menentukan
         }
 
-        // Kasus dasar 1: Jika semua instansi dalam dataset memiliki kelas yang SAMA, kembalikan node daun (leaf node)
         $classes = array_column($dataset, 'class');
+
+        // PRE-PRUNING: Jika jumlah data dalam node kurang dari atau sama dengan minimum threshold, 
+        // hentikan percabangan dan kembalikan kelas mayoritas untuk mencegah OVERFITTING.
+        if (count($dataset) <= $min_instances) {
+            $majorityClass = $this->getMajorityClass($classes);
+            return ['type' => 'leaf', 'class' => $majorityClass, 'probabilities' => $this->calculateDistribution($classes)];
+        }
+
+        // Kasus dasar 1: Jika semua instansi dalam dataset memiliki kelas yang SAMA, kembalikan node daun (leaf node)
         $uniqueClasses = array_unique($classes);
         if (count($uniqueClasses) === 1) {
             $c = array_values($uniqueClasses)[0];
@@ -131,24 +158,26 @@ class C45Engine
             'children' => []
         ];
 
-        // Dapatkan nilai unik dari atribut terbaik dalam dataset saat ini
-        $attributeValues = array_unique(array_column($dataset, $bestAttribute));
+        // Untuk gejala boolean (0 dan 1), pastikan pohon selalu memiliki kedua cabang
+        // agar Prediksi.php tidak bingung saat user menginput nilai yang tidak pernah dilihat model.
+        $attributeValues = [0, 1];
 
         // Hapus atribut yang dipilih dari daftar untuk langkah rekursif selanjutnya
         $remainingAttributes = array_values(array_filter($attributes, fn($attr) => $attr !== $bestAttribute));
 
-        // Bangun cabang secara rekursif untuk setiap nilai unik
+        // Bangun cabang secara rekursif untuk nilai 0 dan 1
         foreach ($attributeValues as $value) {
             // Subset S_v (data di mana atribut = nilai)
-            $subset = array_filter($dataset, fn($row) => isset($row[$bestAttribute]) && $row[$bestAttribute] === $value);
+            $subset = array_filter($dataset, fn($row) => isset($row[$bestAttribute]) && $row[$bestAttribute] == $value);
             
             if (empty($subset)) {
-                // Jika subset kosong, pasangkan daun dengan kelas mayoritas dari dataset INDUK
-                $majorityClass = $this->getMajorityClass($classes);
-                $node['children'][$value] = ['type' => 'leaf', 'class' => $majorityClass, 'probabilities' => $this->calculateDistribution($classes)];
+                // Jika subset kosong (tidak ada data latih untuk cabang nilai ini),
+                // Jangan buat leaf palsu! Tandai sebagai 'unknown' agar traverseTree mengembalikan null
+                // dan sistem bisa melakukan Fallback Jaccard.
+                $node['children'][$value] = ['type' => 'unknown'];
             } else {
                 // Rekursi
-                $node['children'][$value] = $this->buildTree(array_values($subset), $remainingAttributes);
+                $node['children'][$value] = $this->buildTree(array_values($subset), $remainingAttributes, $min_instances);
             }
         }
 

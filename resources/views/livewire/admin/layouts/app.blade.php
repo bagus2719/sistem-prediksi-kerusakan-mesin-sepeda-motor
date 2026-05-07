@@ -98,6 +98,11 @@
                     Generate Model
                 </a>
 
+                <a href="/admin/pengujian" class="{{ request()->is('admin/pengujian*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-indigo-600' }} group flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 mt-1">
+                    <svg class="w-6 h-6 {{ request()->is('admin/pengujian*') ? 'text-white' : 'text-slate-400 group-hover:text-indigo-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    Pengujian Model
+                </a>
+
                 <p class="px-3 text-sm font-bold text-slate-400 uppercase tracking-widest mb-3 mt-8">Monitoring</p>
 
                 <a href="/admin/riwayat" class="{{ request()->is('admin/riwayat*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-indigo-600' }} group flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200">
@@ -125,7 +130,7 @@
         <header class="hidden sm:flex justify-between items-center mb-8 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <h2 class="text-2xl font-bold text-indigo-700">Administrator Console</h2>
             <div class="flex items-center gap-4 text-slate-600">
-                <p class="text-base font-medium">{{ now()->format('l, d F Y') }}</p>
+                <p class="text-base font-medium" id="realtime-clock">{{ now()->translatedFormat('l, d F Y - H:i:s') }} WIB</p>
             </div>
         </header>
 
@@ -147,5 +152,34 @@
     </div>
 
     @livewireScripts
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const dayName = days[now.getDay()];
+            const day = String(now.getDate()).padStart(2, '0');
+            const monthName = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const timeString = `${dayName}, ${day} ${monthName} ${year} - ${hours}:${minutes}:${seconds} WIB`;
+            
+            const clockElement = document.getElementById('realtime-clock');
+            if (clockElement) {
+                clockElement.textContent = timeString;
+            }
+        }
+        
+        // Update setiap 1 detik
+        setInterval(updateClock, 1000);
+        
+        // Panggil sekali saat dimuat
+        document.addEventListener("DOMContentLoaded", updateClock);
+    </script>
 </body>
 </html>

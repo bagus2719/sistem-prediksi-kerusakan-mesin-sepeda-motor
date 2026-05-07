@@ -18,7 +18,6 @@
                     <tr>
                         <th class="px-6 py-4 font-bold tracking-wider">Kode</th>
                         <th class="px-6 py-4 font-bold tracking-wider">Gejala</th>
-                        <th class="px-6 py-4 font-bold tracking-wider">Keterangan</th>
                         <th class="px-6 py-4 font-bold tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -31,7 +30,6 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 font-semibold text-slate-700">{{ $g->nama_gejala }}</td>
-                        <td class="px-6 py-4 text-slate-500 truncate max-w-xs">{{ $g->keterangan ?: '-' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
                             <a href="{{ route('admin.gejala.edit', $g->id) }}" wire:navigate class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
                                 Edit
@@ -43,7 +41,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="px-6 py-10 text-center text-slate-500">
+                        <td colspan="3" class="px-6 py-10 text-center text-slate-500">
                             Belum ada data gejala.
                         </td>
                     </tr>

@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('gejalas', function (Blueprint $table) {
-        $table->id();
-        $table->string('kode')->unique();
-        $table->string('nama_gejala');
-        $table->timestamps();
-    });
+        Schema::table('gejalas', function (Blueprint $table) {
+            $table->dropColumn('keterangan');
+        });
     }
 
     /**
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gejalas');
+        Schema::table('gejalas', function (Blueprint $table) {
+            $table->text('keterangan')->nullable();
+        });
     }
 };
