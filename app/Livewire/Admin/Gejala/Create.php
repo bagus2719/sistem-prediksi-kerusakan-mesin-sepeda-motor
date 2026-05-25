@@ -9,6 +9,8 @@ class Create extends Component
 {
     public $kode, $nama_gejala;
     public $sistem_pembakaran = 'Keduanya';
+    public $is_root = false;
+    public $branch = [];
 
     public function store()
     {
@@ -16,6 +18,8 @@ class Create extends Component
             'kode' => 'required|unique:gejalas,kode',
             'nama_gejala' => 'required|string|max:255',
             'sistem_pembakaran' => 'required|in:Keduanya,Injeksi,Karburator',
+            'is_root' => 'boolean',
+            'branch' => 'nullable|array',
         ], [
             'kode.required' => 'Kode gejala wajib diisi',
             'kode.unique' => 'Kode gejala sudah terpakai',
@@ -26,6 +30,8 @@ class Create extends Component
             'kode' => $this->kode,
             'nama_gejala' => $this->nama_gejala,
             'sistem_pembakaran' => $this->sistem_pembakaran,
+            'is_root' => $this->is_root,
+            'branch' => $this->is_root ? null : $this->branch,
         ]);
 
         session()->flash('message', 'Gejala baru berhasil ditambahkan!');
@@ -34,7 +40,9 @@ class Create extends Component
 
     public function render()
     {
-        return view('livewire.admin.gejala.create')
+        return view('livewire.admin.gejala.create', [
+            'roots' => Gejala::where('is_root', true)->orderBy('kode')->get()
+        ])
             ->layout('livewire.admin.layouts.app');
     }
 }

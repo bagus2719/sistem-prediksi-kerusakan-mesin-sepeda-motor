@@ -50,7 +50,7 @@
                 </span>
             </div>
 
-            <div class="bg-white rounded-xl p-6 overflow-x-auto shadow-inner border border-slate-100">
+            <div class="bg-white rounded-xl p-6 overflow-auto max-h-[75vh] shadow-inner border border-slate-100">
                 @if(is_array($activeModel->tree_data) && !empty($activeModel->tree_data))
                     <div class="py-4">
                         @include('livewire.admin.algoritma.tree-node', ['node' => $activeModel->tree_data, 'gejalas' => $gejalas, 'kerusakans' => $kerusakans])

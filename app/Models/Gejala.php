@@ -13,5 +13,12 @@ class Gejala extends Model
         'kode',
         'nama_gejala',
         'sistem_pembakaran',
+        'is_root',
+        'branch',
+    ];
+
+    protected $casts = [
+        'is_root' => 'boolean',
+        'branch' => 'array',
     ];
 }

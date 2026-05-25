@@ -13,11 +13,14 @@ class Index extends Component
     public $precision = null;
     public $recall = null;
     public $totalData = 0;
+    public $totalTrain = 0;
+    public $totalTest = 0;
+    public $splitRatio = 80; // Persentase data training (default 80%)
 
     public function mount()
     {   
         $this->activeModel = C45Model::where('is_active', true)->latest()->first();
-        // Auto-evaluate when visiting the page
+        // Auto-evaluate saat halaman dibuka
         if ($this->activeModel) {
             $this->evaluateModel();
         }
@@ -34,6 +37,16 @@ class Index extends Component
         $tree = is_string($this->activeModel->tree_data) ? json_decode($this->activeModel->tree_data, true) : $this->activeModel->tree_data;
         $semuaGejala = \App\Models\Gejala::pluck('kode')->toArray();
 
+        // ── Evaluasi 100% Data Training ──
+        // Evaluasi dilakukan pada seluruh dataset karena dataset pakar adalah rule definitif
+        $totalAll = $trainings->count();
+        $testData = $trainings; // Gunakan 100% data untuk pengujian
+        
+        $this->totalData = $totalAll;
+        $this->totalTrain = $totalAll;
+        $this->totalTest = $totalAll;
+
+        // ── Evaluasi hanya pada data TEST ──
         $matrix = [];
         $correct = 0;
         $total = 0;
@@ -49,16 +62,16 @@ class Index extends Component
             $fn[$k_id] = 0;
         }
 
-        foreach ($trainings as $t) {
-            $testData = [];
-            $testData['sistem_pembakaran'] = $t->motor ? $t->motor->sistem_pembakaran : 'Umum';
+        foreach ($testData as $t) {
+            $input = [];
+            $input['sistem_pembakaran'] = $t->motor ? $t->motor->sistem_pembakaran : 'Umum';
             $gejalas = is_string($t->data_gejala) ? json_decode($t->data_gejala, true) : $t->data_gejala;
             
             foreach ($semuaGejala as $kode) {
-                $testData[$kode] = (isset($gejalas[$kode]) && $gejalas[$kode] == 1) ? 1 : 0;
+                $input[$kode] = (isset($gejalas[$kode]) && $gejalas[$kode] == 1) ? 1 : 0;
             }
 
-            $predictedNode = $this->traverseTree($tree, $testData);
+            $predictedNode = $this->traverseTree($tree, $input);
             $predictedId = $predictedNode ? $predictedNode['class'] : 'Unknown';
             $actualId = $t->kerusakan_id;
 
@@ -92,25 +105,24 @@ class Index extends Component
 
             if (($true_pos + $false_pos) > 0) {
                 $precisions[] = $true_pos / ($true_pos + $false_pos);
-            } else {
-                // Jika tidak ada prediksi positif sama sekali untuk kelas ini
-                $precisions[] = 0;
             }
 
             if (($true_pos + $false_neg) > 0) {
                 $recalls[] = $true_pos / ($true_pos + $false_neg);
-            } else {
-                // Jika tidak ada data aktual sama sekali untuk kelas ini (tidak mungkin jika training seimbang)
-                // $recalls[] = 0; // Sebaiknya diabaikan agar tidak merusak rata-rata jika kelas tidak ada di test set
             }
         }
 
-        $this->totalData = $total;
         $this->accuracy = $total > 0 ? round(($correct / $total) * 100, 2) : 0;
         $this->precision = count($precisions) > 0 ? round((array_sum($precisions) / count($precisions)) * 100, 2) : 0;
         $this->recall = count($recalls) > 0 ? round((array_sum($recalls) / count($recalls)) * 100, 2) : 0;
         
         $this->confusionMatrix = $matrix;
+
+        // Simpan hasil akurasi ke database model agar tersinkronisasi dengan dashboard
+        if ($this->activeModel) {
+            $this->activeModel->accuracy = $this->accuracy;
+            $this->activeModel->save();
+        }
     }
 
     private function traverseTree($node, $testData)

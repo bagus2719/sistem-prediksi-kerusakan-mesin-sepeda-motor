@@ -10,6 +10,8 @@ class Edit extends Component
     public $gejalaId;
     public $kode, $nama_gejala;
     public $sistem_pembakaran;
+    public $is_root;
+    public $branch = [];
 
     public function mount($id)
     {
@@ -18,6 +20,8 @@ class Edit extends Component
         $this->kode = $gejala->kode;
         $this->nama_gejala = $gejala->nama_gejala;
         $this->sistem_pembakaran = $gejala->sistem_pembakaran;
+        $this->is_root = $gejala->is_root;
+        $this->branch = $gejala->branch ?? [];
     }
 
     public function update()
@@ -26,6 +30,8 @@ class Edit extends Component
             'kode' => 'required|unique:gejalas,kode,' . $this->gejalaId,
             'nama_gejala' => 'required|string|max:255',
             'sistem_pembakaran' => 'required|in:Keduanya,Injeksi,Karburator',
+            'is_root' => 'boolean',
+            'branch' => 'nullable|array',
         ], [
             'kode.required' => 'Kode gejala wajib diisi',
             'kode.unique' => 'Kode gejala sudah terpakai',
@@ -37,6 +43,8 @@ class Edit extends Component
             'kode' => $this->kode,
             'nama_gejala' => $this->nama_gejala,
             'sistem_pembakaran' => $this->sistem_pembakaran,
+            'is_root' => $this->is_root,
+            'branch' => $this->is_root ? null : $this->branch,
         ]);
 
         session()->flash('message', 'Gejala berhasil diperbarui!');
@@ -45,7 +53,9 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.admin.gejala.edit')
+        return view('livewire.admin.gejala.edit', [
+            'roots' => Gejala::where('is_root', true)->orderBy('kode')->get()
+        ])
             ->layout('livewire.admin.layouts.app');
     }
 }

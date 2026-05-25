@@ -128,67 +128,141 @@
             </div>
             @endif
 
-            <!-- Header Controls -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 pb-6 border-b border-slate-100 gap-5 md:gap-0">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
-                        Daftar Gejala Sistem
-                    </h2>
-                    <p class="text-slate-500 text-base mt-1.5 font-medium">Klik pada kartu untuk memilih kendala yang dirasakan.</p>
-                </div>
-                
-                <div class="bg-indigo-50/50 border border-indigo-100 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-sm transition-all {{ count($gejalaDipilih) > 0 ? 'bg-indigo-50 ring-2 ring-indigo-100' : '' }}">
-                    <div class="w-12 h-12 {{ count($gejalaDipilih) > 0 ? 'bg-indigo-600 shadow-indigo-600/30 text-white' : 'bg-white text-indigo-600' }} rounded-xl flex items-center justify-center shadow-lg transition-colors duration-300">
-                        <span class="font-extrabold text-xl">{{ count($gejalaDipilih) }}</span>
-                    </div>
-                    <div class="text-indigo-900 font-bold text-base leading-tight uppercase tracking-wide">
-                        Gejala<br/>Terpilih
-                    </div>
-                </div>
-            </div>
+            @if($isWizardMode && $currentNode && $currentNode['type'] == 'node')
+                @php 
+                    $currentAttr = $currentNode['attribute'];
+                    $gejalaAktif = collect($listGejala)->firstWhere('kode', $currentAttr);
+                @endphp
 
-            <!-- Gejala Grid checkboxes as Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                @foreach($listGejala as $g)
-                    <label class="cursor-pointer group relative">
-                        <input type="checkbox" wire:model.live="gejalaDipilih" value="{{ $g->kode }}" class="peer sr-only">
-                        
-                        <div class="p-5 border-2 border-slate-100 bg-white rounded-2xl transition-all duration-300
-                                    peer-checked:border-indigo-500 peer-checked:bg-gradient-to-br peer-checked:from-indigo-50/80 peer-checked:to-blue-50/30
-                                    peer-checked:shadow-[0_8px_20px_rgba(79,70,229,0.12)] peer-checked:-translate-y-0.5
-                                    hover:border-indigo-200 hover:bg-slate-50 hover:shadow-md
-                                    flex items-start gap-4">
-                            
-                            <div>
-                                <span class="font-extrabold text-indigo-900 block text-sm mb-1">{{ $g->kode }}</span>
-                                <span class="font-semibold text-slate-700 peer-checked:text-indigo-900 group-hover:text-indigo-700 transition-colors text-base">
-                                    {{ $g->nama_gejala }}
-                                </span>
-                            </div>
+                @if(count($riwayatWawancara) > 0)
+                <div class="mb-6 flex flex-wrap gap-2">
+                    @foreach($riwayatWawancara as $riwayat)
+                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold {{ $riwayat['jawaban'] == 'Ya' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500' }}">
+                            {{ $riwayat['kode'] }}: {{ $riwayat['jawaban'] }}
+                        </span>
+                    @endforeach
+                </div>
+                @endif
+
+                <div class="bg-white border-2 border-indigo-100 rounded-3xl p-8 md:p-12 text-center shadow-sm relative overflow-hidden animate-[fade-in-up_0.4s_ease-out]">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
+                    <span class="inline-block bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-sm font-extrabold tracking-widest mb-6 border border-indigo-100">
+                        PERTANYAAN ANALISIS
+                    </span>
+                    
+                    <h3 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-8 leading-tight">
+                        Apakah kendaraan Anda mengalami:<br/>
+                        <span class="text-indigo-600">"{{ $gejalaAktif ? $gejalaAktif->nama_gejala : $currentAttr }}"</span> ?
+                    </h3>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-lg mx-auto">
+                        <button wire:click="jawabPertanyaan(1)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-extrabold text-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            Ya, Benar
+                        </button>
+                        <button wire:click="jawabPertanyaan(0)" class="flex-1 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 hover:text-slate-800 px-8 py-4 rounded-2xl font-extrabold text-lg transition-all">
+                            Tidak
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 flex flex-wrap justify-start border-t border-slate-100 gap-4">
+                    <button wire:click="prevStep" class="text-slate-500 hover:text-slate-700 font-bold py-2 px-4 flex items-center gap-2 transition-colors rounded-lg hover:bg-slate-50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Mulai Ulang
+                    </button>
+                    @if(count($path_history) > 0)
+                    <button wire:click="kembaliPertanyaan" class="text-indigo-500 hover:text-indigo-700 font-bold py-2 px-4 flex items-center gap-2 transition-colors rounded-lg hover:bg-indigo-50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                        Kembali (Undo)
+                    </button>
+                    @endif
+                </div>
+
+            @else
+                <!-- FALLBACK MODE: CHECKBOXES -->
+                <div class="bg-amber-50 border border-amber-200 p-5 rounded-2xl mb-8 flex gap-4 animate-[fade-in-up_0.4s_ease-out]">
+                    <div class="text-amber-500 shrink-0 mt-0.5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-amber-900 mb-1">Analisis Tambahan Diperlukan</h4>
+                        <p class="text-amber-800 text-sm">Berdasarkan jawaban Anda sebelumnya, kami membutuhkan sedikit informasi tambahan. Silakan centang gejala lain yang mungkin Anda rasakan dari daftar di bawah ini.</p>
+                    </div>
+                </div>
+
+                <!-- Header Controls -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 pb-6 border-b border-slate-100 gap-5 md:gap-0">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                            Daftar Sisa Gejala
+                        </h2>
+                        <p class="text-slate-500 text-base mt-1.5 font-medium">Pilih gejala tambahan untuk meningkatkan akurasi.</p>
+                    </div>
+                    
+                    <div class="bg-indigo-50/50 border border-indigo-100 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-sm transition-all {{ count($gejalaDipilih) > 0 ? 'bg-indigo-50 ring-2 ring-indigo-100' : '' }}">
+                        <div class="w-12 h-12 {{ count($gejalaDipilih) > 0 ? 'bg-indigo-600 shadow-indigo-600/30 text-white' : 'bg-white text-indigo-600' }} rounded-xl flex items-center justify-center shadow-lg transition-colors duration-300">
+                            <span class="font-extrabold text-xl">{{ count($gejalaDipilih) }}</span>
                         </div>
-                    </label>
-                @endforeach
-            </div>
+                        <div class="text-indigo-900 font-bold text-base leading-tight uppercase tracking-wide">
+                            Gejala<br/>Terpilih
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Buttons -->
-            <div class="mt-12 pt-8 flex justify-between border-t border-slate-100">
-                <button wire:click="prevStep" class="text-slate-500 hover:text-slate-700 font-bold py-2 px-4">
-                    Koreksi Motor
-                </button>
-                <button wire:click="prosesPrediksi" 
-                        @if(count($gejalaDipilih) == 0) disabled @endif
-                        class="relative group disabled:opacity-40 disabled:cursor-not-allowed w-full md:w-auto">
-                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[1.5rem] blur opacity-10 group-hover:opacity-30 transition duration-300 group-disabled:hidden"></div>
-                    <div class="relative bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-extrabold text-base shadow-sm flex items-center justify-center gap-3 transition-colors w-full">
-                        @if(count($gejalaDipilih) > 0)
-                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                            Proses Diagnosa
-                        @else
-                            Pilih minimal 1 Gejala
+                <!-- Gejala Grid checkboxes as Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    @foreach($listGejala as $g)
+                        {{-- Skip if already answered 'Tidak' --}}
+                        @if(!in_array($g->kode, $gejalaDijawabTidak))
+                        <label class="cursor-pointer group relative">
+                            <input type="checkbox" wire:model.live="gejalaDipilih" value="{{ $g->kode }}" class="peer sr-only">
+                            
+                            <div class="p-5 border-2 border-slate-100 bg-white rounded-2xl transition-all duration-300
+                                        peer-checked:border-indigo-500 peer-checked:bg-gradient-to-br peer-checked:from-indigo-50/80 peer-checked:to-blue-50/30
+                                        peer-checked:shadow-[0_8px_20px_rgba(79,70,229,0.12)] peer-checked:-translate-y-0.5
+                                        hover:border-indigo-200 hover:bg-slate-50 hover:shadow-md
+                                        flex items-start gap-4">
+                                
+                                <div>
+                                    <span class="font-extrabold text-indigo-900 block text-sm mb-1">{{ $g->kode }}</span>
+                                    <span class="font-semibold text-slate-700 peer-checked:text-indigo-900 group-hover:text-indigo-700 transition-colors text-base">
+                                        {{ $g->nama_gejala }}
+                                    </span>
+                                </div>
+                            </div>
+                        </label>
+                        @endif
+                    @endforeach
+                </div>
+
+                <div class="mt-12 pt-8 flex flex-wrap justify-between border-t border-slate-100 gap-4">
+                    <div class="flex gap-4">
+                        <button wire:click="prevStep" class="text-slate-500 hover:text-slate-700 font-bold py-2 px-4 flex items-center gap-2 transition-colors rounded-lg hover:bg-slate-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Mulai Ulang
+                        </button>
+                        @if(count($path_history) > 0)
+                        <button wire:click="kembaliPertanyaan" class="text-indigo-500 hover:text-indigo-700 font-bold py-2 px-4 flex items-center gap-2 transition-colors rounded-lg hover:bg-indigo-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                            Kembali (Undo)
+                        </button>
                         @endif
                     </div>
-                </button>
-            </div>
+                    <button wire:click="prosesPrediksi" 
+                            @if(count($gejalaDipilih) == 0) disabled @endif
+                            class="relative group disabled:opacity-40 disabled:cursor-not-allowed w-full md:w-auto">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[1.5rem] blur opacity-10 group-hover:opacity-30 transition duration-300 group-disabled:hidden"></div>
+                        <div class="relative bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-extrabold text-base shadow-sm flex items-center justify-center gap-3 transition-colors w-full">
+                            @if(count($gejalaDipilih) > 0)
+                                <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                Proses Diagnosa
+                            @else
+                                Pilih minimal 1 Gejala
+                            @endif
+                        </div>
+                    </button>
+                </div>
+            @endif
         </div>
         @endif
 
@@ -247,22 +321,31 @@
                             Gejala Kendaraan yang Anda Laporkan
                         </h4>
                         <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            @foreach(App\Models\Gejala::whereIn('kode', $hasil['gejala_dipilih'])->get() as $g)
+                            @forelse(App\Models\Gejala::whereIn('kode', $hasil['gejala_dipilih'])->get() as $g)
                             <li class="flex items-start gap-2 text-base text-slate-600">
                                 <span class="text-indigo-500 font-bold mt-0.5">&bull;</span>
                                 <div>
                                     <span class="font-bold text-slate-700">[{{ $g->kode }}]</span> {{ $g->nama_gejala }}
                                 </div>
                             </li>
-                            @endforeach
+                            @empty
+                            <li class="col-span-full text-slate-500 italic">
+                                Anda tidak melaporkan gejala apa pun.
+                            </li>
+                            @endforelse
                         </ul>
                     </div>
                     
                     <div class="flex justify-center flex-col items-center gap-4">
                         <p class="text-base text-slate-400">Peringatan: Keputusan di atas didiagnosis berdasarkan model Machine Learning C4.5 dari data riwayat pakar.</p>
-                        <button wire:click="ulangi" class="px-8 py-3 bg-white border-2 border-indigo-100 text-indigo-600 font-bold text-base rounded-xl hover:bg-indigo-50 transition-colors shadow-sm">
-                            Konsultasi Gejala Lain
-                        </button>
+                        <div class="flex flex-col sm:flex-row gap-4 mt-2">
+                            <button wire:click="ulangiPilihGejala" class="px-8 py-3 bg-white border-2 border-indigo-100 text-indigo-600 font-bold text-base rounded-xl hover:bg-indigo-50 transition-colors shadow-sm">
+                                Ulangi Prediksi (Gejala)
+                            </button>
+                            <button wire:click="ubahMotor" class="px-8 py-3 bg-indigo-50 border-2 border-indigo-100 text-indigo-700 font-bold text-base rounded-xl hover:bg-indigo-100 transition-colors shadow-sm">
+                                Pilih Ulang Kendaraan
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

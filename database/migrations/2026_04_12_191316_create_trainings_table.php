@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->string('kode')->unique(); // T01
             $table->foreignId('kerusakan_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('motor_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->json('data_gejala')->nullable();
             $table->timestamps();
         });
     }

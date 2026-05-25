@@ -37,7 +37,7 @@ class MotorSeeder extends Seeder
         // ── YAMAHA INJEKSI ──
         $yamaha_injeksi = [
             'Mio M3', 'Mio S', 'Soul GT FI', 'NMAX 155',
-            'Aerox 155', 'Lexi', 'Freego', 'Fino FI',
+            'Aerox 155', 'Lexi', 'Fino FI',
         ];
         foreach ($yamaha_injeksi as $nama) {
             Motor::updateOrCreate(

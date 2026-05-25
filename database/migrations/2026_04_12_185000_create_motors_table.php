@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('merk'); // Honda atau Yamaha
             $table->string('nama_motor'); // Vario, Beat, dll
+            $table->string('sistem_pembakaran')->nullable(); // Injeksi / Karburator
             $table->timestamps();
         });
     }

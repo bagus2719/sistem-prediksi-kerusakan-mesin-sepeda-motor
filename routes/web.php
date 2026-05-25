@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\User\Dashboard;
 use App\Livewire\User\Prediksi;
 use App\Livewire\User\Riwayat;
+use App\Livewire\User\RiwayatDetail;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\Gejala\Index as GejalaIndex;
 use App\Livewire\Admin\Kerusakan\Index as KerusakanIndex;
@@ -17,6 +18,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::get('/prediksi', Prediksi::class)->name('prediksi');
     Route::get('/riwayat', Riwayat::class)->name('riwayat');
+    Route::get('/riwayat/{id}', RiwayatDetail::class)->name('riwayat.detail');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -42,6 +44,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Pengujian
     Route::get('/admin/pengujian', \App\Livewire\Admin\Pengujian\Index::class)->name('admin.pengujian');
+    Route::get('/admin/export-pengujian', [\App\Http\Controllers\Admin\ExportController::class, 'exportPengujian'])->name('admin.export.pengujian');
 
     // Motor CRUD
     Route::get('/admin/motor', \App\Livewire\Admin\Motor\Index::class)->name('admin.motor.index');

@@ -15,7 +15,9 @@ return new class extends Migration
         $table->id();
         $table->foreignId('user_id')->constrained()->cascadeOnDelete();
         $table->foreignId('kerusakan_id')->constrained()->cascadeOnDelete();
-
+        $table->foreignId('motor_id')->nullable()->constrained()->nullOnDelete();
+        $table->string('motor_name')->nullable();
+        $table->string('sistem_pembakaran')->nullable();
         $table->text('gejala_dipilih'); // JSON
         $table->float('confidence')->nullable();
 

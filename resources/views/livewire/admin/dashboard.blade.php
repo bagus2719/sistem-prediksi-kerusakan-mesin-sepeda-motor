@@ -67,13 +67,96 @@
 
     </div>
 
+    <!-- Advanced Analytics -->
+    <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Status Model C4.5 -->
+        <div class="lg:col-span-1 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                Status Engine C4.5
+            </h2>
+            
+            @if($activeModel)
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                    <div class="w-16 h-16 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg shadow-emerald-200 mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-black text-indigo-900 mb-1">Model Aktif</h3>
+                    @if(is_null($activeModel->accuracy))
+                        <p class="text-amber-600 font-medium bg-amber-100 px-3 py-1 rounded-full text-sm inline-block mb-4">Belum Dievaluasi</p>
+                    @else
+                        <p class="text-indigo-600 font-medium bg-indigo-100 px-3 py-1 rounded-full text-sm inline-block mb-4">Akurasi: {{ $activeModel->accuracy }}%</p>
+                    @endif
+                    <p class="text-slate-500 text-xs">Terakhir diperbarui:<br> <span class="font-bold text-slate-700">{{ $activeModel->created_at->diffForHumans() }}</span></p>
+                </div>
+            @else
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 bg-rose-50/50 rounded-xl border border-rose-100">
+                    <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-rose-800 mb-2">Model Tidak Tersedia</h3>
+                    <p class="text-rose-600 text-sm mb-4">Sistem belum memiliki pohon keputusan yang aktif.</p>
+                    <a href="/admin/algoritma" class="bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-rose-700 transition-colors">Generate Sekarang</a>
+                </div>
+            @endif
+        </div>
+
+        <!-- Riwayat Diagnosa Terkini -->
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Riwayat Diagnosa Terkini
+                </h2>
+                <a href="/admin/riwayat" class="text-sm font-bold text-indigo-600 hover:text-indigo-700">Lihat Semua &rarr;</a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-sm text-slate-500 uppercase tracking-wider">
+                            <th class="pb-3 font-medium">Pengguna</th>
+                            <th class="pb-3 font-medium">Motor</th>
+                            <th class="pb-3 font-medium">Prediksi Kerusakan</th>
+                            <th class="pb-3 font-medium text-right">Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm divide-y divide-slate-100">
+                        @forelse($recentRiwayats as $riwayat)
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="py-3 font-medium text-slate-800">
+                                    {{ $riwayat->user->name }}
+                                </td>
+                                <td class="py-3 text-slate-600">
+                                    {{ $riwayat->motor_name ?? 'Umum' }}
+                                </td>
+                                <td class="py-3">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                        {{ $riwayat->kerusakan->kode }}
+                                    </span>
+                                </td>
+                                <td class="py-3 text-slate-500 text-right whitespace-nowrap">
+                                    {{ $riwayat->created_at->diffForHumans() }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="py-8 text-center text-slate-500 italic">Belum ada riwayat diagnosa.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Menu -->
     <div class="mt-12">
         <h2 class="text-xl font-bold text-slate-800 mb-6">Akses Cepat</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <a href="/admin/gejala" class="bg-indigo-600 p-8 rounded-2xl border border-indigo-700 flex flex-col justify-between hover:bg-indigo-700 transition-colors">
+            <a href="/admin/gejala" class="bg-indigo-600 p-8 rounded-2xl border border-indigo-700 flex flex-col justify-between hover:bg-indigo-700 transition-colors shadow-sm">
                 <div class="mb-4">
                     <svg class="w-12 h-12 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 </div>
@@ -83,12 +166,12 @@
                 </div>
             </a>
 
-            <a href="/admin/training" class="bg-emerald-600 p-8 rounded-2xl border border-emerald-700 flex flex-col justify-between hover:bg-emerald-700 transition-colors">
+            <a href="/admin/training" class="bg-emerald-600 p-8 rounded-2xl border border-emerald-700 flex flex-col justify-between hover:bg-emerald-700 transition-colors shadow-sm">
                 <div class="mb-4">
                     <svg class="w-12 h-12 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-extrabold text-indigo-600 mb-2">Cetak Set Evaluasi</h3>
+                    <h3 class="text-2xl font-extrabold text-white mb-2">Kelola Data Training</h3>
                     <p class="text-emerald-100 text-base">Bangun data relasional pohon keputusan C4.5 baru langsung ke dalam sistem model pakar.</p>
                 </div>
             </a>

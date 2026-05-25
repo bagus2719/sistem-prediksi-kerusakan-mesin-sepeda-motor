@@ -15,6 +15,9 @@ return new class extends Migration
         $table->id();
         $table->string('kode')->unique();
         $table->string('nama_gejala');
+        $table->string('sistem_pembakaran')->nullable();
+        $table->boolean('is_root')->default(false);
+        $table->string('branch')->nullable();
         $table->timestamps();
     });
     }

@@ -17,3 +17,12 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+*.csv
+*.xlsx
+generate_expert_dataset.py
+z/generate_expert_dataset.py
+z/generate_perhitungan_excel.py
+z/import_dataset.php
+GEMINI.md
+/datasets
+/dataset
