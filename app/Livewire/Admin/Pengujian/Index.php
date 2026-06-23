@@ -40,13 +40,13 @@ class Index extends Component
         // ── Evaluasi 100% Data Training ──
         // Evaluasi dilakukan pada seluruh dataset karena dataset pakar adalah rule definitif
         $totalAll = $trainings->count();
-        $testData = $trainings; // Gunakan 100% data untuk pengujian
+        $testData = $trainings;
         
         $this->totalData = $totalAll;
         $this->totalTrain = $totalAll;
         $this->totalTest = $totalAll;
 
-        // ── Evaluasi hanya pada data TEST ──
+        // Evaluasi model pada data testing
         $matrix = [];
         $correct = 0;
         $total = 0;

@@ -47,7 +47,6 @@ class PreprocessingService
         $countAkhir = Training::count();
 
         // Catatan: Data Integration & Transformation sudah terjadi saat proses Import CSV.
-        // Data Splitting (Train/Test Split) dapat diimplementasikan di sini di masa mendatang jika diperlukan.
         return [
             'status' => 'success',
             'message' => "Preprocessing selesai! {$duplicateCount} data duplikat dihapus.",

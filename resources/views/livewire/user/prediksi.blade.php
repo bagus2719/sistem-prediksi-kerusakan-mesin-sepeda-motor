@@ -11,7 +11,7 @@
         </p>
     </div>
 
-    <!-- Progress Steps -->
+    <!-- Tahap Proses Prediksi -->
     <div class="flex justify-center mb-6 sm:mb-10">
         <div class="flex items-center gap-1.5 sm:gap-3">
             <span class="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 {{ $step >= 1 ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-slate-400' }} font-bold text-sm sm:text-base">1</span>
@@ -37,12 +37,12 @@
 
     <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-sm border border-slate-200 relative mb-10">
         
-        <!-- STEP 1: VEHICLE INFO -->
+        <!-- STEP 1: INFORMASI KENDARAAN -->
         @if($step == 1)
         <div>
             <h2 class="text-2xl font-bold text-slate-800 mb-6 pb-4 border-b border-slate-100 text-center">Tipe Pabrikan Motor</h2>
             <div class="max-w-2xl mx-auto space-y-6">
-                <!-- Select Merek -->
+                <!-- Pemilihan Merek -->
                 <div>
                     <label class="block text-base font-semibold text-slate-700 mb-2">Pilih Merek Kendaraan</label>
                     <div class="grid grid-cols-2 gap-4">
@@ -61,7 +61,7 @@
                     </div>
                 </div>
 
-                <!-- Select Model -->
+                <!-- Pemilihan Model -->
                 @if($selectedMerk)
                 <div class="animate-[fade-in-up_0.3s_ease-out]">
                     <label class="block text-base font-semibold text-slate-700 mb-2">Tipe Motor {{ $selectedMerk }}</label>
@@ -106,7 +106,7 @@
         @endif
 
 
-        <!-- STEP 2: GEJALA SELECTION -->
+        <!-- STEP 2: Pemilihan Gejala -->
         @if($step == 2)
         <div>
             {{-- Info Banner Kendaraan --}}
@@ -266,7 +266,7 @@
         </div>
         @endif
 
-        <!-- STEP 3: RESULT SECTION -->
+        <!-- STEP 3: SECTION HASIL -->
         @if($step == 3 && !empty($hasil))
         <div id="hasil-prediksi" class="animate-[fade-in-up_0.6s_ease-out] mt-6">
             <div class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-sm">
