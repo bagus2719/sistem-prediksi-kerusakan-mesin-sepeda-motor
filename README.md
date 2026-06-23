@@ -86,10 +86,10 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan *project* ini di komputer A
    DB_PASSWORD=
    ```
 
-6. **Migrasi Database:**
-   Bangun struktur tabel ke dalam *database* yang telah Anda buat.
+6. **Migrasi & Seeding Database:**
+   Bangun struktur tabel sekaligus isi data awal (akun Admin, Gejala, dan Motor) ke dalam *database*.
    ```bash
-   php artisan migrate
+   php artisan migrate --seed
    ```
 
 7. **Jalankan Aplikasi:**
@@ -104,8 +104,8 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan *project* ini di komputer A
 ## 🧠 Alur Penggunaan Algoritma (Untuk Admin)
 
 Untuk membuat sistem pakar ini bisa "menebak" kerusakan, Admin harus memberinya data latih.
-1. **Login sebagai Admin** (Buat akun secara manual melalui register jika belum ada, lalu set `role` menjadi `admin` di *database*).
-2. Pergi ke menu **Master Data > Gejala**. Pastikan Anda sudah mendaftarkan kode-kode gejala utama (G01 - G14 dsb).
+1. **Login sebagai Admin** (Gunakan email: `admin@gmail.com` dan password: `admin123` hasil *seeding*).
+2. Pergi ke menu **Master Data > Gejala**. Pastikan kode-kode gejala utama (G01 - G14 dsb) sudah masuk otomatis dari *seeder*.
 3. Pergi ke menu **Data Latih (Training)**. Unggah data CSV historis Anda. Sistem akan mengintegrasikannya otomatis.
 4. Di halaman yang sama, klik **"Jalankan Preprocessing"** untuk membersihkan data dari duplikasi.
 5. Pergi ke menu **Algoritma C4.5**, lalu klik **"Generate Model C4.5"**.
