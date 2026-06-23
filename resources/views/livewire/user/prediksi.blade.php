@@ -1,31 +1,31 @@
 <div class="max-w-5xl mx-auto pb-20 animate-[fade-in-up_0.5s_ease-out]">
 
     <!-- Header Section -->
-    <div class="text-center mb-12 mt-4 relative">
-        <span class="bg-indigo-50 text-indigo-700 px-5 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase border border-indigo-100 inline-block mb-5">Diagnosa Sistem C4.5</span>
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 tracking-tight mb-5 leading-tight">
+    <div class="text-center mb-8 sm:mb-12 mt-2 sm:mt-4 relative">
+        <span class="bg-indigo-50 text-indigo-700 px-4 sm:px-5 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-widest uppercase border border-indigo-100 inline-block mb-4 sm:mb-5">Diagnosa Sistem C4.5</span>
+        <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 tracking-tight mb-3 sm:mb-5 leading-tight">
             Apa Keluhan Motor Anda?
         </h1>
-        <p class="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+        <p class="text-slate-500 text-sm sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             Ikuti tahapan spesifikasi kendaraan dan gejala untuk mendapatkan analisis prediksi kerusakan yang presisi.
         </p>
     </div>
 
     <!-- Progress Steps -->
-    <div class="flex justify-center mb-10">
-        <div class="flex items-center gap-3">
-            <span class="flex items-center justify-center w-10 h-10 rounded-full border-2 {{ $step >= 1 ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-slate-400' }} font-bold text-base">1</span>
-            <span class="text-base font-bold {{ $step >= 1 ? 'text-indigo-800' : 'text-slate-400' }}">Kendaraan</span>
+    <div class="flex justify-center mb-6 sm:mb-10">
+        <div class="flex items-center gap-1.5 sm:gap-3">
+            <span class="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 {{ $step >= 1 ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-slate-400' }} font-bold text-sm sm:text-base">1</span>
+            <span class="text-xs sm:text-base font-bold {{ $step >= 1 ? 'text-indigo-800' : 'text-slate-400' }}">Kendaraan</span>
             
-            <div class="w-12 h-0.5 {{ $step >= 2 ? 'bg-indigo-600' : 'bg-slate-200' }} mx-2"></div>
+            <div class="w-6 sm:w-12 h-0.5 {{ $step >= 2 ? 'bg-indigo-600' : 'bg-slate-200' }} mx-1 sm:mx-2"></div>
             
-            <span class="flex items-center justify-center w-10 h-10 rounded-full border-2 {{ $step >= 2 ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-slate-400' }} font-bold text-base">2</span>
-            <span class="text-base font-bold {{ $step >= 2 ? 'text-indigo-800' : 'text-slate-400' }}">Gejala</span>
+            <span class="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 {{ $step >= 2 ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-slate-400' }} font-bold text-sm sm:text-base">2</span>
+            <span class="text-xs sm:text-base font-bold {{ $step >= 2 ? 'text-indigo-800' : 'text-slate-400' }}">Gejala</span>
             
-            <div class="w-12 h-0.5 {{ $step == 3 ? 'bg-indigo-600' : 'bg-slate-200' }} mx-2"></div>
+            <div class="w-6 sm:w-12 h-0.5 {{ $step == 3 ? 'bg-indigo-600' : 'bg-slate-200' }} mx-1 sm:mx-2"></div>
             
-            <span class="flex items-center justify-center w-10 h-10 rounded-full border-2 {{ $step == 3 ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-slate-400' }} font-bold text-base">3</span>
-            <span class="text-base font-bold {{ $step == 3 ? 'text-indigo-800' : 'text-slate-400' }}">Prediksi</span>
+            <span class="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 {{ $step == 3 ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-slate-400' }} font-bold text-sm sm:text-base">3</span>
+            <span class="text-xs sm:text-base font-bold {{ $step == 3 ? 'text-indigo-800' : 'text-slate-400' }}">Prediksi</span>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-200 relative mb-10">
+    <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-sm border border-slate-200 relative mb-10">
         
         <!-- STEP 1: VEHICLE INFO -->
         @if($step == 1)
@@ -112,7 +112,7 @@
             {{-- Info Banner Kendaraan --}}
             @php $motorInfo = App\Models\Motor::find($selectedMotorId); @endphp
             @if($motorInfo)
-            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl p-5 mb-8 flex items-center justify-between gap-4">
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -144,13 +144,13 @@
                 </div>
                 @endif
 
-                <div class="bg-white border-2 border-indigo-100 rounded-3xl p-8 md:p-12 text-center shadow-sm relative overflow-hidden animate-[fade-in-up_0.4s_ease-out]">
+                <div class="bg-white border-2 border-indigo-100 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 text-center shadow-sm relative overflow-hidden animate-[fade-in-up_0.4s_ease-out]">
                     <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-blue-500"></div>
                     <span class="inline-block bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-sm font-extrabold tracking-widest mb-6 border border-indigo-100">
                         PERTANYAAN ANALISIS
                     </span>
                     
-                    <h3 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-8 leading-tight">
+                    <h3 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-800 mb-6 sm:mb-8 leading-tight">
                         Apakah kendaraan Anda mengalami:<br/>
                         <span class="text-indigo-600">"{{ $gejalaAktif ? $gejalaAktif->nama_gejala : $currentAttr }}"</span> ?
                     </h3>
@@ -269,7 +269,7 @@
         <!-- STEP 3: RESULT SECTION -->
         @if($step == 3 && !empty($hasil))
         <div id="hasil-prediksi" class="animate-[fade-in-up_0.6s_ease-out] mt-6">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 md:p-12 shadow-sm">
+            <div class="bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-sm">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-10 pb-8 border-b border-slate-100">
                         <div class="flex items-center gap-5">
                             <div class="w-16 h-16 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center shadow-inner border border-green-100 shrink-0">

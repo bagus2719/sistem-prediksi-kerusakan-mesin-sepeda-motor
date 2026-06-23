@@ -262,7 +262,7 @@ class Prediksi extends Component
         $engine = new \App\Services\C45Engine();
         
         if ($fromWizard && $this->currentNode && $this->currentNode['type'] === 'leaf') {
-            // Jika dari wizard, kita inject leafNode yang sudah didapat agar Jaccard dan Confidence dihitung oleh Engine
+            // Jika dari wizard, kita inject leafNode yang sudah didapat agar Fallback Confidence dihitung oleh Engine
             $top3 = $engine->predictFromLeaf($this->currentNode, $this->gejalaDipilih, $motor ? $motor->sistem_pembakaran : 'Umum');
         } else {
             $top3 = $engine->predict($testData, $this->gejalaDipilih, $motor ? $motor->sistem_pembakaran : 'Umum');

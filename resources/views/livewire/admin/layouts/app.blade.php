@@ -151,6 +151,9 @@
         {{ $slot }}
     </div>
 
+    <!-- Sidebar Backdrop (Mobile) -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-30 hidden sm:hidden transition-opacity"></div>
+
     @livewireScripts
     <script>
         function updateClock() {
@@ -179,7 +182,48 @@
         setInterval(updateClock, 1000);
         
         // Panggil sekali saat dimuat
-        document.addEventListener("DOMContentLoaded", updateClock);
+        document.addEventListener("DOMContentLoaded", function() {
+            updateClock();
+
+            // Sidebar toggle untuk mobile
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            const toggleBtn = document.querySelector('[data-drawer-toggle="sidebar"]');
+
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    if (sidebar.classList.contains('-translate-x-full')) {
+                        openSidebar();
+                    } else {
+                        closeSidebar();
+                    }
+                });
+            }
+
+            if (backdrop) {
+                backdrop.addEventListener('click', closeSidebar);
+            }
+
+            // Tutup sidebar saat klik link di mobile
+            const sidebarLinks = sidebar ? sidebar.querySelectorAll('a') : [];
+            sidebarLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 640) {
+                        closeSidebar();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

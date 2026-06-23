@@ -22,7 +22,63 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         
         @if(count($riwayats) > 0)
-            <div class="overflow-x-auto">
+
+            <!-- Mobile Card View -->
+            <div class="sm:hidden divide-y divide-gray-100">
+                @foreach ($riwayats as $r)
+                <div class="p-4 hover:bg-gray-50/50 transition-colors">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div class="text-sm font-medium text-gray-900">{{ $r->created_at->format('d M Y') }} <span class="text-gray-400 text-xs">{{ $r->created_at->format('H:i') }}</span></div>
+                        </div>
+                        @php
+                            $confMobile = (float) $r->confidence;
+                            $colorClassMobile = $confMobile >= 80 ? 'text-emerald-600 bg-emerald-50 ring-emerald-500/20' : 
+                                        ($confMobile >= 50 ? 'text-amber-600 bg-amber-50 ring-amber-500/20' : 
+                                        'text-rose-600 bg-rose-50 ring-rose-500/20');
+                        @endphp
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ring-1 ring-inset {{ $colorClassMobile }}">
+                            {{ number_format($confMobile, 1) }}%
+                        </span>
+                    </div>
+
+                    <div class="mb-2">
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{{ $r->motor ? $r->motor->nama_motor : '-' }}</span>
+                        <span class="text-xs text-gray-500 ml-1">{{ $r->sistem_pembakaran ?? 'Umum' }}</span>
+                    </div>
+
+                    @if($r->kerusakan)
+                        <h3 class="font-bold text-gray-900 text-base mb-1">{{ $r->kerusakan->nama_kerusakan }}</h3>
+                        <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ \Illuminate\Support\Str::limit($r->kerusakan->solusi, 60) }}</p>
+                    @endif
+
+                    @if(is_array($r->gejala_dipilih))
+                        <div class="flex flex-wrap gap-1.5 mb-3">
+                            @foreach(array_slice($r->gejala_dipilih, 0, 4) as $g)
+                                @php $namaGejala = $gejalaMap[$g] ?? $g; @endphp
+                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600">
+                                    {{ \Illuminate\Support\Str::limit($namaGejala, 25) }}
+                                </span>
+                            @endforeach
+                            @if(count($r->gejala_dipilih) > 4)
+                                <span class="text-xs text-gray-400 self-center">+{{ count($r->gejala_dipilih) - 4 }} lainnya</span>
+                            @endif
+                        </div>
+                    @endif
+
+                    <a href="{{ route('riwayat.detail', $r->id) }}" wire:navigate class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
+                        Lihat Detail
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+                @endforeach
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs text-gray-500 uppercase bg-gray-50/80 border-b border-gray-100">
                         <tr>

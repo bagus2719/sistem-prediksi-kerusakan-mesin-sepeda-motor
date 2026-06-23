@@ -1,17 +1,18 @@
 <div class="w-full flex flex-col gap-8 animate-[fade-in-up_0.6s_ease-out]">
     <!-- HERO SECTION -->
-    <section class="bg-indigo-600 rounded-3xl shadow-sm text-white px-8 py-16 md:px-16 md:py-20 lg:py-24">
-        <div class="max-w-3xl">
+    <section class="rounded-2xl sm:rounded-3xl shadow-sm text-white px-5 py-10 sm:px-8 sm:py-16 md:px-16 md:py-20 lg:py-24 relative overflow-hidden" 
+             style="background-image: linear-gradient(to right, rgba(79, 70, 229, 0.95), rgba(79, 70, 229, 0.4)), url('{{ asset('images/bg-mesin.png') }}'); background-size: cover; background-position: center;">
+        <div class="max-w-3xl relative z-10">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/50 border border-indigo-400 text-sm font-medium mb-6">
                 <span class="w-2 h-2 rounded-full bg-green-400"></span>
                 Prediksi Cerdas Matic 4-Tak
             </div>
             
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 tracking-tight">
+            <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 sm:mb-6 tracking-tight">
                 Kenali Masalah Motor Anda Sebelum Terlambat.
             </h1>
             
-            <p class="text-lg md:text-xl text-indigo-100 mb-10 max-w-2xl font-light leading-relaxed">
+            <p class="text-sm sm:text-lg md:text-xl text-indigo-100 mb-6 sm:mb-10 max-w-2xl font-light leading-relaxed">
                 Sistem pakar diagnosis kerusakan mesin sepeda motor. Dirancang khusus untuk menganalisis gejala tidak wajar menggunakan metode komputasi cerdas (Decision Tree).
             </p>
             
@@ -34,7 +35,7 @@
     </section>
 
     <!-- STAT CARDS -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex items-start gap-4">
             <div class="w-12 h-12 shrink-0 bg-blue-50 rounded-xl flex items-center justify-center">
                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
@@ -68,7 +69,7 @@
     <!-- RECENT DIAGNOSTICS (IF LOGGED IN) -->
     @auth
     @if(count($riwayatTerakhir) > 0)
-    <div class="mt-8 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+    <div class="mt-6 sm:mt-8 bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-sm">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -77,7 +78,7 @@
             <a href="/riwayat" class="text-sm font-bold text-indigo-600 hover:text-indigo-700">Lihat Semua &rarr;</a>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($riwayatTerakhir as $riwayat)
             <div class="border border-slate-100 bg-slate-50 rounded-2xl p-5 hover:border-indigo-200 hover:shadow-md transition-all group">
                 <div class="flex justify-between items-start mb-3">
@@ -103,7 +104,7 @@
     @endauth
 
     <!-- HOW TO USE SECTION -->
-    <div class="mt-8 mb-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="mt-6 sm:mt-8 mb-2 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         <div class="bg-indigo-600 rounded-3xl p-8 shadow-sm text-white flex flex-col justify-center relative overflow-hidden">
             <div class="relative z-10">
                 <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-6">
@@ -139,7 +140,7 @@
     </div>
 
     <!-- ABOUT SECTION -->
-    <section id="info" class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 mt-2">
+    <section id="info" class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200 mt-2">
         <div class="flex flex-col md:flex-row gap-12 items-center">
             <div class="flex-1">
                 <div class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold tracking-wider rounded-md uppercase mb-4">Tentang AI Mekanik</div>

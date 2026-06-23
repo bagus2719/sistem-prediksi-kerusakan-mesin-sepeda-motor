@@ -24,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Jika request memiliki header X-Forwarded-Proto (selalu dikirim oleh Ngrok) atau diakses via HTTPS
+        if (request()->header('x-forwarded-proto') === 'https' || str_contains(request()->getHost(), 'ngrok')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
