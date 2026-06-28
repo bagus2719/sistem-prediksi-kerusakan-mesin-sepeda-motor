@@ -12,13 +12,14 @@ RUN apk add --no-cache \
     libpng-dev \
     oniguruma-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip \
     nodejs \
     npm
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Copy Composer from official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

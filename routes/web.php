@@ -38,6 +38,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/training', TrainingIndex::class)->name('admin.training');
     Route::get('/admin/training/create', \App\Livewire\Admin\Training\Create::class)->name('admin.training.create');
     Route::get('/admin/training/{id}/edit', \App\Livewire\Admin\Training\Edit::class)->name('admin.training.edit');
+    Route::get('/admin/export-training', [\App\Http\Controllers\Admin\ExportController::class, 'exportTraining'])->name('admin.export.training');
 
     // Algoritma C4.5
     Route::get('/admin/algoritma', AlgoritmaIndex::class)->name('admin.algoritma');

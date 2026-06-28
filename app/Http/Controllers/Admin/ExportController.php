@@ -241,4 +241,90 @@ class ExportController extends Controller
 
         return $response;
     }
+
+    public function exportTraining()
+    {
+        $trainings = Training::with(['motor', 'kerusakan'])->get();
+        $gejalas = Gejala::orderBy('kode', 'asc')->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Dataset Training');
+
+        // Header
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Kerusakan');
+        $sheet->setCellValue('C1', 'Profil Kendaraan');
+        
+        $col = 'D';
+        foreach ($gejalas as $g) {
+            $sheet->setCellValue($col . '1', $g->kode);
+            $sheet->getColumnDimension($col)->setWidth(8);
+            $col++;
+        }
+
+        $sheet->getColumnDimension('A')->setWidth(5);
+        $sheet->getColumnDimension('B')->setWidth(40);
+        $sheet->getColumnDimension('C')->setWidth(30);
+
+        // Data
+        $row = 2;
+        foreach ($trainings as $idx => $t) {
+            $sheet->setCellValue('A' . $row, $idx + 1);
+            $sheet->setCellValue('B' . $row, $t->kerusakan ? $t->kerusakan->kode . ' - ' . $t->kerusakan->nama_kerusakan : '-');
+            
+            $kendaraan = 'Semua Motor';
+            if ($t->motor) {
+                $kendaraan = $t->motor->merk . ' ' . $t->motor->nama_motor . ' (' . $t->motor->sistem_pembakaran . ')';
+            }
+            $sheet->setCellValue('C' . $row, $kendaraan);
+
+            $dataGejala = is_string($t->data_gejala) ? json_decode($t->data_gejala, true) : $t->data_gejala;
+
+            $c = 'D';
+            foreach ($gejalas as $g) {
+                $val = isset($dataGejala[$g->kode]) && $dataGejala[$g->kode] == 1 ? 1 : 0;
+                $sheet->setCellValue($c . $row, $val);
+                $c++;
+            }
+            $row++;
+        }
+
+        // Style header
+        $lastCol = $sheet->getHighestColumn();
+        $sheet->getStyle('A1:' . $lastCol . '1')->applyFromArray([
+            'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FF2E75B6'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ]
+        ]);
+        $sheet->getRowDimension(1)->setRowHeight(25);
+
+        // Border all
+        $lastRow = $row - 1;
+        if ($lastRow >= 1) {
+            $sheet->getStyle('A1:' . $lastCol . $lastRow)->getBorders()
+                ->getAllBorders()
+                ->setBorderStyle(Border::BORDER_THIN)
+                ->getColor()->setARGB('FFBFBFBF');
+        }
+
+        $filename = 'Dataset_Training_C45_' . date('Ymd_His') . '.xlsx';
+
+        $response = new StreamedResponse(function () use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        $response->headers->set('Cache-Control', 'max-age=0, must-revalidate, no-cache, no-store');
+
+        return $response;
+    }
 }
