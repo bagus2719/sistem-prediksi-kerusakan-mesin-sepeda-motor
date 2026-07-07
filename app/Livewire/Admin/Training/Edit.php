@@ -24,13 +24,12 @@ class Edit extends Component
         $this->trainingId = $training->id;
         $this->kerusakan_id = $training->kerusakan_id;
         
-        $savedGejala = json_decode($training->data_gejala, true) ?? [];
+        $savedGejala = is_string($training->data_gejala) ? json_decode($training->data_gejala, true) : $training->data_gejala;
+        $savedGejala = is_array($savedGejala) ? $savedGejala : [];
+        
         foreach($this->allGejalas as $g) {
-            $this->gejala_input[$g->kode] = current(array_filter([$savedGejala[$g->kode] ?? 0])) ?: 0;
-            // Note: the line above properly maps 1 or 0, array_filter is safe.
-            // Better: just cast to boolean flag or use 1/0
             $val = isset($savedGejala[$g->kode]) ? $savedGejala[$g->kode] : 0;
-            $this->gejala_input[$g->kode] = $val ? 1 : 0;
+            $this->gejala_input[$g->kode] = ($val == 1) ? true : false;
         }
     }
 

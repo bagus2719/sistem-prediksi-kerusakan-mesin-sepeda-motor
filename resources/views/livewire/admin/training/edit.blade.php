@@ -36,7 +36,7 @@
                     @foreach($allGejalas as $g)
                     <div class="flex items-start gap-3 p-4 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-slate-50 transition-colors">
                         <div class="flex items-center h-5">
-                            <input type="checkbox" id="gejala_{{ $g->id }}" wire:model="gejala_input.{{ $g->kode }}" value="1" 
+                            <input type="checkbox" id="gejala_{{ $g->id }}" wire:model="gejala_input.{{ $g->kode }}" 
                                 class="w-5 h-5 text-indigo-600 bg-slate-100 border-slate-300 rounded focus:ring-indigo-500 focus:ring-2">
                         </div>
                         <div class="text-base">
