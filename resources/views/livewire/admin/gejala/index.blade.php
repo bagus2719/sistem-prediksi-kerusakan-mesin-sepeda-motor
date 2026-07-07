@@ -4,7 +4,7 @@
             <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Data Gejala Master</h2>
             <p class="text-slate-500 text-base mt-1">Kelola daftar gejala kerusakan yang bisa dialami sepeda motor.</p>
         </div>
-        <a href="{{ route('admin.gejala.create') }}" wire:navigate class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-base font-semibold shadow-sm flex items-center gap-2 transition-colors">
+        <a href="{{ route('admin.gejala.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-base font-semibold shadow-sm flex items-center gap-2 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Tambah Gejala
         </a>
@@ -47,7 +47,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('admin.gejala.edit', $g->id) }}" wire:navigate class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
+                            <a href="{{ route('admin.gejala.edit', $g->id) }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
                                 Edit
                             </a>
                             <button wire:click="delete({{ $g->id }})" wire:confirm="Yakin ingin menghapus gejala ini?" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors shadow-sm">

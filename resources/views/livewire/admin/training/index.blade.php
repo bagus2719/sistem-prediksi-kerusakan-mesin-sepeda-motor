@@ -60,7 +60,7 @@
                 Memindai Data...
             </span>
         </button>
-        <a href="{{ route('admin.training.create') }}" wire:navigate class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-base font-semibold shadow-sm flex items-center gap-2 transition-colors">
+        <a href="{{ route('admin.training.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-base font-semibold shadow-sm flex items-center gap-2 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Tambah Satu Baris
         </a>
@@ -134,7 +134,7 @@
                             </td>
                         @endforeach
                         <td class="px-4 py-4 text-right space-x-2 border-l border-slate-200 whitespace-nowrap">
-                            <a href="{{ route('admin.training.edit', $t->id) }}" wire:navigate class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
+                            <a href="{{ route('admin.training.edit', $t->id) }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
                                 Edit
                             </a>
                             <button wire:click="delete({{ $t->id }})" wire:confirm="Yakin ingin menghapus data training ini?" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors shadow-sm">

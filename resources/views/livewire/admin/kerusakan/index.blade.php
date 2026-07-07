@@ -4,7 +4,7 @@
             <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Kategori Kerusakan</h2>
             <p class="text-slate-500 text-base mt-1">Daftar jenis kerusakan beserta perbaikan/solusinya.</p>
         </div>
-        <a href="{{ route('admin.kerusakan.create') }}" wire:navigate class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-base font-semibold shadow-sm flex items-center gap-2 transition-colors">
+        <a href="{{ route('admin.kerusakan.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-base font-semibold shadow-sm flex items-center gap-2 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Tambah Kerusakan
         </a>
@@ -33,7 +33,7 @@
                         <td class="px-6 py-4 font-semibold text-slate-700">{{ $k->nama_kerusakan }}</td>
                         <td class="px-6 py-4 text-slate-500 truncate max-w-xs">{{ $k->solusi ?: '-' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('admin.kerusakan.edit', $k->id) }}" wire:navigate class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
+                            <a href="{{ route('admin.kerusakan.edit', $k->id) }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm">
                                 Edit
                             </a>
                             <button wire:click="delete({{ $k->id }})" wire:confirm="Yakin ingin menghapus kerusakan ini?" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors shadow-sm">
