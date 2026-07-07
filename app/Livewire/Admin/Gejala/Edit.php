@@ -8,14 +8,14 @@ use App\Models\Gejala;
 class Edit extends Component
 {
     public $gejalaId;
-    public $kode, $nama_gejala;
-    public $sistem_pembakaran;
-    public $is_root;
+    public $kode = '';
+    public $nama_gejala = '';
+    public $sistem_pembakaran = 'Keduanya';
+    public $is_root = false;
     public $branch = [];
 
-    public function mount($id)
+    public function mount(Gejala $gejala)
     {
-        $gejala = Gejala::findOrFail($id);
         $this->gejalaId = $gejala->id;
         $this->kode = $gejala->kode;
         $this->nama_gejala = $gejala->nama_gejala;

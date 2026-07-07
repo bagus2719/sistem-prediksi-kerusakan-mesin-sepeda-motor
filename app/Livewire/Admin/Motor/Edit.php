@@ -8,13 +8,12 @@ use App\Models\Motor;
 class Edit extends Component
 {
     public $motor_id;
-    public $merk;
-    public $nama_motor;
-    public $sistem_pembakaran;
+    public $merk = '';
+    public $nama_motor = '';
+    public $sistem_pembakaran = 'Injeksi';
 
-    public function mount($id)
+    public function mount(Motor $motor)
     {
-        $motor = Motor::findOrFail($id);
         $this->motor_id = $motor->id;
         $this->merk = $motor->merk;
         $this->nama_motor = $motor->nama_motor;

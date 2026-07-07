@@ -15,12 +15,11 @@ class Edit extends Component
     public $allGejalas = [];
     public $allKerusakans = [];
 
-    public function mount($id)
+    public function mount(Training $training)
     {
         $this->allGejalas = Gejala::orderBy('kode')->get();
         $this->allKerusakans = Kerusakan::orderBy('kode')->get();
 
-        $training = Training::findOrFail($id);
         $this->trainingId = $training->id;
         $this->kerusakan_id = $training->kerusakan_id;
         

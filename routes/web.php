@@ -27,17 +27,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Gejala CRUD
     Route::get('/admin/gejala', GejalaIndex::class)->name('admin.gejala');
     Route::get('/admin/gejala/create', \App\Livewire\Admin\Gejala\Create::class)->name('admin.gejala.create');
-    Route::get('/admin/gejala/{id}/edit', \App\Livewire\Admin\Gejala\Edit::class)->name('admin.gejala.edit');
+    Route::get('/admin/gejala/{gejala}/edit', \App\Livewire\Admin\Gejala\Edit::class)->name('admin.gejala.edit');
 
     // Kerusakan CRUD
     Route::get('/admin/kerusakan', KerusakanIndex::class)->name('admin.kerusakan');
     Route::get('/admin/kerusakan/create', \App\Livewire\Admin\Kerusakan\Create::class)->name('admin.kerusakan.create');
-    Route::get('/admin/kerusakan/{id}/edit', \App\Livewire\Admin\Kerusakan\Edit::class)->name('admin.kerusakan.edit');
+    Route::get('/admin/kerusakan/{kerusakan}/edit', \App\Livewire\Admin\Kerusakan\Edit::class)->name('admin.kerusakan.edit');
 
     // Training CRUD
     Route::get('/admin/training', TrainingIndex::class)->name('admin.training');
     Route::get('/admin/training/create', \App\Livewire\Admin\Training\Create::class)->name('admin.training.create');
-    Route::get('/admin/training/{id}/edit', \App\Livewire\Admin\Training\Edit::class)->name('admin.training.edit');
+    Route::get('/admin/training/{training}/edit', \App\Livewire\Admin\Training\Edit::class)->name('admin.training.edit');
     Route::get('/admin/export-training', [\App\Http\Controllers\Admin\ExportController::class, 'exportTraining'])->name('admin.export.training');
 
     // Algoritma C4.5
@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Motor CRUD
     Route::get('/admin/motor', \App\Livewire\Admin\Motor\Index::class)->name('admin.motor.index');
     Route::get('/admin/motor/create', \App\Livewire\Admin\Motor\Create::class)->name('admin.motor.create');
-    Route::get('/admin/motor/{id}/edit', \App\Livewire\Admin\Motor\Edit::class)->name('admin.motor.edit');
+    Route::get('/admin/motor/{motor}/edit', \App\Livewire\Admin\Motor\Edit::class)->name('admin.motor.edit');
 
     // Riwayat
     Route::get('/admin/riwayat', RiwayatAdmin::class)->name('admin.riwayat');

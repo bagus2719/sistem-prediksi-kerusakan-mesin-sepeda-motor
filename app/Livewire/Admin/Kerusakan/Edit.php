@@ -8,11 +8,12 @@ use App\Models\Kerusakan;
 class Edit extends Component
 {
     public $kerusakanId;
-    public $kode, $nama_kerusakan, $solusi;
+    public $kode = '';
+    public $nama_kerusakan = '';
+    public $solusi = '';
 
-    public function mount($id)
+    public function mount(Kerusakan $kerusakan)
     {
-        $kerusakan = Kerusakan::findOrFail($id);
         $this->kerusakanId = $kerusakan->id;
         $this->kode = $kerusakan->kode;
         $this->nama_kerusakan = $kerusakan->nama_kerusakan;
