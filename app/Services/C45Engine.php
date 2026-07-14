@@ -10,7 +10,6 @@ class C45Engine
 {
     /**
      * Membangun Model Pohon Keputusan C4.5.
-     * Fungsi ini bertugas mengambil data latih, memprosesnya, dan membangun decision tree.
      */
     public function generateModel()
     {
@@ -104,7 +103,7 @@ class C45Engine
         }
 
         // PENYIMPANAN MODEL C4.5
-        // Mematikan (nonaktifkan) model pohon keputusan yang lama di database
+        // Menonaktifkan model pohon keputusan yang lama di database
         C45Model::where('is_active', true)->update(['is_active' => false]);
 
         // Menyimpan struktur pohon keputusan JSON yang baru dibuat ke database
@@ -119,7 +118,6 @@ class C45Engine
 
     /**
      * Build Tree Rekursif.
-     * Inilah inti dari algoritma C4.5 yang akan memanggil dirinya sendiri sampai pohon selesai.
      */
     private function buildTree($dataset, $attributes, $rootGejalas = [], $min_instances = 2, $activeBranch = null, $branchMap = [])
     {
@@ -298,7 +296,7 @@ class C45Engine
 
     /**
      * Hitung Gain Ratio untuk atribut tertentu.
-     * Gain Ratio = Information Gain / Split Info (Menghindari bias pada atribut dengan banyak cabang).
+     * Gain Ratio = Information Gain / Split Info.
      */
     private function calculateGainRatio($dataset, $attribute, $entropyS)
     {
@@ -440,7 +438,8 @@ class C45Engine
                 if ($k) {
                     // MENCEGAH KETIDAKLOGISAN
                     // Pastikan persentase penyakit alternatif TIDAK BOLEH melebihi penyakit utama dari C4.5
-                    $maxConf = empty($top3) ? 99.0 : end($top3)['confidence'] - 0.1;
+                    // Menurunkan batas maksimal dari 99% menjadi 85% agar lebih realistis (Revisi Sidang)
+                    $maxConf = empty($top3) ? 85.0 : end($top3)['confidence'] - 0.1;
                     if ($conf > $maxConf) {
                         $conf = $maxConf; // Paksa nilai mentok di bawah penyakit utama
                     }
