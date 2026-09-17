@@ -101,6 +101,22 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan *project* ini di komputer A
 
 ---
 
+## 🔑 Akun Default (Hasil Seeder)
+
+Setelah Anda menjalankan perintah `php artisan migrate --seed`, sistem secara otomatis akan membuatkan beberapa akun percobaan yang bisa langsung digunakan untuk *login*:
+
+### Role: Admin
+- **Email:** `admin@gmail.com`
+- **Password:** `admin123`
+
+### Role: User
+- **Email:** `bagus@gmail.com`
+- **Password:** `bagus123`
+- **Email (Cadangan):** `testing@gmail.com`
+- **Password:** `testing123`
+
+---
+
 ## 🧠 Alur Penggunaan Algoritma (Untuk Admin)
 
 Untuk membuat sistem pakar ini bisa "menebak" kerusakan, Admin harus memberinya data latih.

@@ -436,10 +436,8 @@ class C45Engine
             foreach ($alternatives as $k_id => $conf) {
                 $k = \App\Models\Kerusakan::find($k_id);
                 if ($k) {
-                    // MENCEGAH KETIDAKLOGISAN
                     // Pastikan persentase penyakit alternatif TIDAK BOLEH melebihi penyakit utama dari C4.5
-                    // Menurunkan batas maksimal dari 99% menjadi 85% agar lebih realistis (Revisi Sidang)
-                    $maxConf = empty($top3) ? 85.0 : end($top3)['confidence'] - 0.1;
+                    $maxConf = empty($top3) ? 99.0 : end($top3)['confidence'] - 0.1;
                     if ($conf > $maxConf) {
                         $conf = $maxConf; // Paksa nilai mentok di bawah penyakit utama
                     }
